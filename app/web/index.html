@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Scada IA</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <div class="liquid liquidOne"></div>
+    <div class="liquid liquidTwo"></div>
+    <main class="shell">
+      <section class="chatSurface">
+        <section class="chatPanel">
+        <header class="topbar">
+          <div class="brandMark">
+            <span class="musicGlyph"></span>
+            <h1>Scada IA</h1>
+          </div>
+          <div class="topActions">
+            <button id="themeButton" class="themeButton" title="Cambiar tema" aria-label="Cambiar tema">
+              <span class="themeIcon"></span>
+            </button>
+            <button id="healthButton" class="iconButton" title="Estado del servicio" aria-label="Estado del servicio">
+              <span></span>
+            </button>
+          </div>
+        </header>
+
+        <section id="messages" class="messages" aria-live="polite">
+          <article class="message assistant welcomeMessage">
+            <div class="bubble">
+              Hola.
+            </div>
+          </article>
+        </section>
+
+        <form id="chatForm" class="composer">
+          <textarea id="prompt" name="prompt" rows="1" placeholder="Escribe tu mensaje..." autofocus></textarea>
+          <button id="sendButton" class="sendButton" type="submit" title="Enviar" aria-label="Enviar">
+            <span></span>
+          </button>
+        </form>
+        </section>
+      </section>
+    </main>
+    <script src="/app.js"></script>
+  </body>
+</html>

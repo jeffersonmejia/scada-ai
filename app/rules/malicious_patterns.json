@@ -1,0 +1,19 @@
+{
+  "rules": [
+    {
+      "id": "malicious-disable-safety",
+      "description": "Detecta intentos de desactivar seguridad o protecciones.",
+      "patterns": ["\\b(disable|turn off|desactivar|apagar)\\b.*\\b(alarm|interlock|protection|protecci[oó]n|alarma|safety)\\b"],
+      "decision": "block",
+      "severity": "high"
+    },
+    {
+      "id": "malicious-payload-crafting",
+      "description": "Detecta construcción de payloads ofensivos.",
+      "patterns": ["\\b(payload|packet|paquete|frame|trama)\\b.*\\b(craft|forge|spoof|inyectar|forjar|suplantar)\\b"],
+      "decision": "block",
+      "severity": "high"
+    }
+  ]
+}
+

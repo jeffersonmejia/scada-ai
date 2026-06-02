@@ -1,0 +1,19 @@
+{
+  "rules": [
+    {
+      "id": "control-center-dispatch-command",
+      "description": "Detecta acciones de despacho o control remoto.",
+      "patterns": ["\\b(scada|control center|centro de control|ems|dms)\\b.*\\b(dispatch|shed load|load shedding|control remoto|telecontrol)\\b"],
+      "decision": "block",
+      "severity": "high"
+    },
+    {
+      "id": "control-center-topology-sensitive",
+      "description": "Detecta solicitudes sensibles de topología operativa.",
+      "patterns": ["\\b(topology|topolog[ií]a|single line diagram|diagrama unifilar)\\b.*\\b(substation|subestaci[oó]n|feeder|alimentador)\\b"],
+      "decision": "flag",
+      "severity": "medium"
+    }
+  ]
+}
+

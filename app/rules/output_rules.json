@@ -1,0 +1,19 @@
+{
+  "rules": [
+    {
+      "id": "output-operational-command",
+      "description": "Bloquea respuestas que contienen comandos operativos accionables.",
+      "patterns": ["\\b(write_register|write_coil|operate|selectWithValue|C_SC_NA_1|C_DC_NA_1)\\b"],
+      "decision": "block",
+      "severity": "high"
+    },
+    {
+      "id": "output-credential-leak",
+      "description": "Bloquea exposición de secretos.",
+      "patterns": ["\\b(api[_-]?key|bearer\\s+[A-Za-z0-9._-]+|password\\s*=|token\\s*=)\\b"],
+      "decision": "block",
+      "severity": "high"
+    }
+  ]
+}
+

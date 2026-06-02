@@ -1,0 +1,33 @@
+{
+  "rules": [
+    {
+      "id": "protocol-modbus-write",
+      "description": "Detecta intentos de escritura o modificación Modbus.",
+      "patterns": ["\\bmodbus\\b.*\\b(write|coil|register|function\\s*0?5|function\\s*0?6|function\\s*15|function\\s*16)\\b"],
+      "decision": "flag",
+      "severity": "high"
+    },
+    {
+      "id": "protocol-dnp3-control",
+      "description": "Detecta control operativo DNP3.",
+      "patterns": ["\\bdnp3\\b.*\\b(select before operate|sbo|operate|control relay output block|crob)\\b"],
+      "decision": "block",
+      "severity": "high"
+    },
+    {
+      "id": "protocol-iec104-command",
+      "description": "Detecta comandos IEC 60870-5-104.",
+      "patterns": ["\\biec\\s*60870|\\biec\\s*104\\b|\\bC_SC_NA_1\\b|\\bC_DC_NA_1\\b"],
+      "decision": "flag",
+      "severity": "medium"
+    },
+    {
+      "id": "protocol-iec61850-control",
+      "description": "Detecta control IEC 61850.",
+      "patterns": ["\\biec\\s*61850\\b.*\\b(goose|mms|selectWithValue|operate|trip)\\b"],
+      "decision": "block",
+      "severity": "high"
+    }
+  ]
+}
+

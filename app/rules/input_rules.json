@@ -1,0 +1,19 @@
+{
+  "rules": [
+    {
+      "id": "input-credential-request",
+      "description": "Bloquea solicitudes de credenciales o bypass.",
+      "patterns": ["\\b(password|credential|token|api key|bypass|disable authentication|contrase[nñ]a|credencial)\\b"],
+      "decision": "block",
+      "severity": "high"
+    },
+    {
+      "id": "input-step-by-step-attack",
+      "description": "Bloquea guías paso a paso ofensivas.",
+      "patterns": ["\\b(step by step|paso a paso|instructions|instrucciones)\\b.*\\b(attack|exploit|intrusion|sabotage|ataque|explotar|intrusi[oó]n)\\b"],
+      "decision": "block",
+      "severity": "high"
+    }
+  ]
+}
+

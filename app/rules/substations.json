@@ -1,0 +1,19 @@
+{
+  "rules": [
+    {
+      "id": "substation-breaker-operation",
+      "description": "Detecta instrucciones sobre apertura o cierre de interruptores.",
+      "patterns": ["\\b(open|close|trip|reclose|abrir|cerrar)\\b.*\\b(breaker|circuit breaker|interruptor|recloser)\\b"],
+      "decision": "block",
+      "severity": "high"
+    },
+    {
+      "id": "substation-protection-settings",
+      "description": "Detecta modificación de ajustes de protección.",
+      "patterns": ["\\b(relay|protecci[oó]n|IED)\\b.*\\b(setting|pickup|time dial|curve|ajuste|parametr)\\b"],
+      "decision": "flag",
+      "severity": "high"
+    }
+  ]
+}
+
