@@ -10,40 +10,44 @@
     <div class="liquid liquidOne"></div>
     <div class="liquid liquidTwo"></div>
     <main class="shell">
+      <header class="topbar">
+        <div class="brandMark">
+          <span class="musicGlyph">
+            <ion-icon name="musical-notes-outline" class="brandIcon" aria-hidden="true"></ion-icon>
+          </span>
+          <h1>Scada IA</h1>
+        </div>
+        <div class="topActions">
+          <button id="themeButton" class="themeButton" title="Cambiar tema" aria-label="Cambiar tema">
+            <ion-icon name="moon-outline" class="buttonIcon" aria-hidden="true"></ion-icon>
+          </button>
+        </div>
+      </header>
       <section class="chatSurface">
         <section class="chatPanel">
-        <header class="topbar">
-          <div class="brandMark">
-            <span class="musicGlyph"></span>
-            <h1>Scada IA</h1>
-          </div>
-          <div class="topActions">
-            <button id="themeButton" class="themeButton" title="Cambiar tema" aria-label="Cambiar tema">
-              <span class="themeIcon"></span>
-            </button>
-            <button id="healthButton" class="iconButton" title="Estado del servicio" aria-label="Estado del servicio">
-              <span></span>
-            </button>
-          </div>
-        </header>
+          <section id="messages" class="messages" aria-live="polite">
+            <article class="message assistant welcomeMessage">
+              <div class="bubble">Hola.</div>
+            </article>
+          </section>
 
-        <section id="messages" class="messages" aria-live="polite">
-          <article class="message assistant welcomeMessage">
-            <div class="bubble">
-              Hola.
-            </div>
-          </article>
-        </section>
-
-        <form id="chatForm" class="composer">
-          <textarea id="prompt" name="prompt" rows="1" placeholder="Escribe tu mensaje..." autofocus></textarea>
-          <button id="sendButton" class="sendButton" type="submit" title="Enviar" aria-label="Enviar">
-            <span></span>
-          </button>
-        </form>
+          <form id="chatForm" class="composer">
+            <textarea id="prompt" name="prompt" rows="1" placeholder="Escribe tu mensaje..." autofocus></textarea>
+            <button id="sendButton" class="sendButton" type="submit" title="Enviar" aria-label="Enviar">
+              <ion-icon name="arrow-up-outline" class="buttonIcon" aria-hidden="true"></ion-icon>
+            </button>
+          </form>
         </section>
       </section>
     </main>
+    <script type="module" src="/vendor/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="/vendor/ionicons/ionicons.js"></script>
+    <script>
+      if ("EventSource" in window) {
+        const liveReload = new EventSource("/__live-reload");
+        liveReload.addEventListener("reload", () => window.location.reload());
+      }
+    </script>
     <script src="/app.js"></script>
   </body>
 </html>

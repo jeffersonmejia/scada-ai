@@ -1,16 +1,28 @@
 const form = document.querySelector("#chatForm");
-const healthButton = document.querySelector("#healthButton");
 const themeButton = document.querySelector("#themeButton");
 const messages = document.querySelector("#messages");
 const promptInput = document.querySelector("#prompt");
 const sendButton = document.querySelector("#sendButton");
-const unavailableMessage = "Lo siento, en este momento no puedo responder. Intenta más tarde.";
+const unavailableMessage = "Lo siento, no puedo responder ahora, intenta mas tarde";
+const requestTimeoutMs = 5000;
 
 const savedTheme = localStorage.getItem("theme");
 const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
 if (savedTheme === "dark" || (!savedTheme && prefersDark)) {
   document.documentElement.classList.add("dark");
 }
+
+function syncThemeIcon() {
+  const icon = themeButton.querySelector("ion-icon");
+  const isDark = document.documentElement.classList.contains("dark");
+  if (icon) {
+    icon.setAttribute("name", isDark ? "sunny-outline" : "moon-outline");
+  }
+  themeButton.title = isDark ? "Modo claro" : "Modo oscuro";
+  themeButton.setAttribute("aria-label", themeButton.title);
+}
+
+syncThemeIcon();
 
 function addMessage(role, content, meta = "") {
   const article = document.createElement("article");
@@ -46,6 +58,28 @@ function addThinking() {
   return article;
 }
 
+async function fetchWithTimeout(url, options = {}) {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), requestTimeoutMs);
+
+  try {
+    return await fetch(url, {
+      ...options,
+      signal: controller.signal
+    });
+  } finally {
+    clearTimeout(timeoutId);
+  }
+}
+
+async function modelsUnavailable() {
+  const res = await fetchWithTimeout("/health");
+  if (!res.ok) return true;
+
+  const payload = await res.json();
+  return payload.roberta_loaded !== true || payload.ollama_available !== true;
+}
+
 form.addEventListener("submit", async (event) => {
   event.preventDefault();
   const prompt = new FormData(form).get("prompt").trim();
@@ -58,7 +92,13 @@ form.addEventListener("submit", async (event) => {
   const thinking = addThinking();
 
   try {
-    const res = await fetch("/web/chat", {
+    if (prompt.toLowerCase() === "hola" && await modelsUnavailable()) {
+      thinking.remove();
+      addMessage("assistant", unavailableMessage);
+      return;
+    }
+
+    const res = await fetchWithTimeout("/web/chat", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -80,19 +120,10 @@ form.addEventListener("submit", async (event) => {
   }
 });
 
-healthButton.addEventListener("click", async () => {
-  const res = await fetch("/health");
-  const payload = await res.json();
-  addMessage(
-    "assistant",
-    `Estado: ${payload.status}`,
-    `RoBERTa: ${payload.roberta_loaded} · Ollama: ${payload.ollama_available}`
-  );
-});
-
 themeButton.addEventListener("click", () => {
   const isDark = document.documentElement.classList.toggle("dark");
   localStorage.setItem("theme", isDark ? "dark" : "light");
+  syncThemeIcon();
 });
 
 promptInput.addEventListener("input", () => {

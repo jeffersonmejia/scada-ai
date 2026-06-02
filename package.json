@@ -1,0 +1,10 @@
+{
+  "scripts": {
+    "dev:frontend": "node app/web/server.js",
+    "frontend": "node app/web/server.js"
+  },
+  "dependencies": {
+    "ionicons": "^7.4.0"
+  },
+  "devDependencies": {}
+}
