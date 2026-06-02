@@ -1,10 +1,20 @@
 const form = document.querySelector("#chatForm");
+const emptyPrompt = document.querySelector("#emptyPrompt");
+let emptyState = document.querySelector("#emptyState");
+const newChatButton = document.querySelector("#newChatButton");
 const themeButton = document.querySelector("#themeButton");
 const messages = document.querySelector("#messages");
 const promptInput = document.querySelector("#prompt");
 const sendButton = document.querySelector("#sendButton");
 const unavailableMessage = "Lo siento, no puedo responder ahora, intenta mas tarde";
 const requestTimeoutMs = 5000;
+const emptyPrompts = [
+  "Detectar instrucciones maliciosas",
+  "Revisar comandos peligrosos",
+  "Validar prompts antes del modelo",
+  "Bloquear intentos de inyección",
+  "Analizar una petición sospechosa"
+];
 
 const savedTheme = localStorage.getItem("theme");
 const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
@@ -24,7 +34,43 @@ function syncThemeIcon() {
 
 syncThemeIcon();
 
+if (emptyPrompt) {
+  let promptIndex = 0;
+  setInterval(() => {
+    promptIndex = (promptIndex + 1) % emptyPrompts.length;
+    const currentPrompt = document.querySelector("#emptyPrompt");
+    if (currentPrompt) {
+      currentPrompt.textContent = emptyPrompts[promptIndex];
+    }
+  }, 2600);
+}
+
+function createEmptyState() {
+  const section = document.createElement("section");
+  section.id = "emptyState";
+  section.className = "emptyState";
+
+  const title = document.createElement("h2");
+  title.textContent = "¿Qué quieres hacer hoy?";
+
+  const prompt = document.createElement("p");
+  prompt.id = "emptyPrompt";
+  prompt.textContent = emptyPrompts[0];
+
+  section.appendChild(title);
+  section.appendChild(prompt);
+  return section;
+}
+
+function hideEmptyState() {
+  if (emptyState) {
+    emptyState.remove();
+    emptyState = null;
+  }
+}
+
 function addMessage(role, content, meta = "") {
+  hideEmptyState();
   const article = document.createElement("article");
   article.className = `message ${role}`;
   const bubble = document.createElement("div");
@@ -124,6 +170,16 @@ themeButton.addEventListener("click", () => {
   const isDark = document.documentElement.classList.toggle("dark");
   localStorage.setItem("theme", isDark ? "dark" : "light");
   syncThemeIcon();
+});
+
+newChatButton.addEventListener("click", () => {
+  messages.replaceChildren();
+  emptyState = createEmptyState();
+  messages.appendChild(emptyState);
+  promptInput.value = "";
+  promptInput.style.height = "auto";
+  sendButton.disabled = false;
+  promptInput.focus();
 });
 
 promptInput.addEventListener("input", () => {
