@@ -56,6 +56,12 @@ body {
   transition: background 220ms ease, color 180ms ease;
 }
 
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 260ms;
+  animation-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
 .liquid {
   display: none;
 }
@@ -225,7 +231,7 @@ p {
 }
 
 .message {
-  animation: fadeIn 160ms ease both;
+  animation: messageIn 260ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
   display: flex;
 }
 
@@ -261,12 +267,14 @@ p {
 }
 
 .assistant .bubble {
+  animation: bubbleSettle 320ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
   background: var(--assistant-bubble);
   border-bottom-left-radius: 0.42rem;
   color: var(--ink);
 }
 
 .user .bubble {
+  animation: bubbleSettle 240ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
   background: var(--user-bubble);
   border-color: var(--line-strong);
   border-bottom-right-radius: 0.42rem;
@@ -290,7 +298,7 @@ p {
 }
 
 .dot {
-  animation: dotFade 1s ease-in-out infinite;
+  animation: dotFloat 1s ease-in-out infinite;
   background: var(--muted);
   border-radius: 999px;
   height: 6px;
@@ -368,7 +376,7 @@ button {
   color: #ffffff;
   cursor: pointer;
   font: inherit;
-  transition: background 150ms ease, border-color 150ms ease, opacity 150ms ease;
+  transition: background 150ms ease, border-color 150ms ease, color 150ms ease, opacity 150ms ease, transform 150ms ease;
 }
 
 button:hover {
@@ -378,6 +386,10 @@ button:hover {
 button:disabled {
   cursor: default;
   opacity: 0.44;
+}
+
+button:active {
+  transform: scale(0.97);
 }
 
 .iconButton,
@@ -396,6 +408,7 @@ button:disabled {
 #newChatButton {
   gap: 6px;
   padding: 0 12px 0 10px;
+  transition: background 150ms ease, border-color 150ms ease, color 150ms ease, transform 150ms ease;
   width: auto;
 }
 
@@ -457,24 +470,49 @@ button:disabled {
   width: 21px;
 }
 
-@keyframes fadeIn {
+@keyframes messageIn {
   from {
     opacity: 0;
+    transform: translateY(6px);
   }
 
   to {
     opacity: 1;
+    transform: translateY(0);
   }
 }
 
-@keyframes dotFade {
+@keyframes bubbleSettle {
+  from {
+    opacity: 0;
+    transform: scale(0.985);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes dotFloat {
   0%,
   100% {
     opacity: 0.25;
+    transform: translateY(0);
   }
 
   50% {
     opacity: 0.78;
+    transform: translateY(-2px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation-duration: 1ms !important;
+    transition-duration: 1ms !important;
   }
 }
 

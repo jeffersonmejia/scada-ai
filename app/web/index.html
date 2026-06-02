@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="es">
+<html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -18,11 +18,11 @@
           <h1>Scada IA</h1>
         </div>
         <div class="topActions">
-          <button id="newChatButton" class="themeButton" title="Nuevo chat" aria-label="Nuevo chat">
+          <button id="newChatButton" class="themeButton" title="New chat" aria-label="New chat">
             <ion-icon name="add-outline" class="buttonIcon" aria-hidden="true"></ion-icon>
-            <span>Nuevo chat</span>
+            <span>New chat</span>
           </button>
-          <button id="themeButton" class="themeButton" title="Cambiar tema" aria-label="Cambiar tema">
+          <button id="themeButton" class="themeButton" title="Change theme" aria-label="Change theme">
             <ion-icon name="moon-outline" class="buttonIcon" aria-hidden="true"></ion-icon>
           </button>
         </div>
@@ -31,14 +31,14 @@
         <section class="chatPanel">
           <section id="messages" class="messages" aria-live="polite">
             <section id="emptyState" class="emptyState">
-              <h2>¿Qué quieres hacer hoy?</h2>
-              <p id="emptyPrompt">Detectar instrucciones maliciosas</p>
+              <h2>What do you want to check today?</h2>
+              <p id="emptyPrompt">Detect malicious code instructions</p>
             </section>
           </section>
 
           <form id="chatForm" class="composer">
-            <textarea id="prompt" name="prompt" rows="1" placeholder="Escribe tu mensaje..." autofocus></textarea>
-            <button id="sendButton" class="sendButton" type="submit" title="Enviar" aria-label="Enviar">
+            <textarea id="prompt" name="prompt" rows="1" placeholder="Write your message..." autofocus></textarea>
+            <button id="sendButton" class="sendButton" type="submit" title="Send" aria-label="Send">
               <ion-icon name="arrow-up-outline" class="buttonIcon" aria-hidden="true"></ion-icon>
             </button>
           </form>
