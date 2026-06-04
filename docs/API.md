@@ -1,5 +1,29 @@
 # API Reference
 
+## Table of Contents
+
+1. [Purpose](#1-purpose)
+2. [Base URL](#2-base-url)
+3. [Network Access](#3-network-access)
+4. [Security Flow](#4-security-flow)
+5. [Middleware Endpoints](#5-middleware-endpoints)
+   - [5.1 Health](#51-health)
+   - [5.2 Web Config](#52-web-config)
+   - [5.3 Internal Chat](#53-internal-chat)
+   - [5.4 Web Chat](#54-web-chat)
+6. [External Service Contracts](#6-external-service-contracts)
+   - [6.1 RoBERTa](#61-roberta)
+   - [6.2 Mistral](#62-mistral)
+7. [Security Metrics](#7-security-metrics)
+   - [7.1 Required Metrics](#71-required-metrics)
+   - [7.2 Useful Rates](#72-useful-rates)
+   - [7.3 Review Signals](#73-review-signals)
+   - [7.4 Not Security Metrics](#74-not-security-metrics)
+8. [Common Errors](#8-common-errors)
+   - [8.1 RoBERTa Unavailable](#81-roberta-unavailable)
+   - [8.2 Mistral Unavailable](#82-mistral-unavailable)
+   - [8.3 Timeout](#83-timeout)
+
 ## 1. Purpose
 
 This API is the middleware surface for internal clients in the private `10.x.x.x` network.

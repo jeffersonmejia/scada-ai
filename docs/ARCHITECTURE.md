@@ -1,12 +1,24 @@
 # Architecture
 
-## Overview
+## Table of Contents
+
+1. [Overview](#1-overview)
+2. [Runtime Role](#2-runtime-role)
+3. [System Context](#3-system-context)
+4. [Main Components](#4-main-components)
+5. [Request Flow](#5-request-flow)
+6. [Configuration](#6-configuration)
+7. [Error Handling](#7-error-handling)
+8. [Audit Trail](#8-audit-trail)
+9. [Operational Boundary](#9-operational-boundary)
+
+## 1. Overview
 
 This project is a FastAPI middleware for protecting LLM requests and responses in a SCADA and electrical-grid context.
 
 It runs as the main security gateway inside a private `10.x.x.x` network. The middleware receives web/API requests, sends each prompt to an internal RoBERTa classifier API first, rejects malicious prompts, forwards only non-malicious prompts to an internal Mistral API, and records audit events.
 
-## Runtime Role
+## 2. Runtime Role
 
 This repository is intended to run as middleware only.
 
@@ -20,7 +32,7 @@ Responsibilities:
 - Apply output rules to the Mistral response.
 - Write audit logs.
 
-## System Context
+## 3. System Context
 
 ```text
 Client / Web UI
@@ -39,7 +51,7 @@ SCADA LLM Security Middleware
 
 Endpoint details and external service contracts are documented in [API.md](API.md).
 
-## Main Components
+## 4. Main Components
 
 ```text
 app/
@@ -54,7 +66,7 @@ app/
 └── web/             browser chat client
 ```
 
-## Request Flow
+## 5. Request Flow
 
 ```mermaid
 sequenceDiagram
@@ -79,7 +91,7 @@ sequenceDiagram
     end
 ```
 
-## Configuration
+## 6. Configuration
 
 Runtime configuration is loaded from `.env` through `app/core/config.py`.
 
@@ -87,7 +99,7 @@ Configuration controls the internal service locations, timeout behavior, rule lo
 
 Use `.env.example` as the public template. Do not commit `.env`.
 
-## Error Handling
+## 7. Error Handling
 
 Service failures are converted into structured responses by the centralized error handler.
 
@@ -99,7 +111,7 @@ Expected degraded cases:
 
 The web client displays a user-facing unavailable message when the backend cannot respond within the configured timeout.
 
-## Audit Trail
+## 8. Audit Trail
 
 The audit service records decisions to JSONL.
 
@@ -116,6 +128,6 @@ Audit events include:
 
 Review audit logs before sharing them because they can contain prompts and model outputs.
 
-## Operational Boundary
+## 9. Operational Boundary
 
 The middleware does not own or host the RoBERTa or Mistral services. It depends on those internal services being available on the private network.
