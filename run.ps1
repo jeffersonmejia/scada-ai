@@ -6,16 +6,102 @@ $PidFile = Join-Path $ProjectRoot ".uvicorn.pid"
 $Port = 8000
 
 function Get-ListeningProcessIds {
+    $processIds = @()
+
     try {
-        Get-NetTCPConnection -LocalPort $Port -State Listen -ErrorAction Stop |
+        $processIds += Get-NetTCPConnection -LocalPort $Port -State Listen -ErrorAction Stop |
             Select-Object -ExpandProperty OwningProcess -Unique
     }
     catch {
-        @()
+        try {
+            $netstatLines = netstat.exe -ano
+            foreach ($line in $netstatLines) {
+                if ($line -match "^\s*TCP\s+\S+:$Port\s+\S+\s+LISTENING\s+(\d+)\s*$") {
+                    $processIds += [int]$matches[1]
+                }
+            }
+        }
+        catch {
+            @()
+        }
+    }
+
+    @($processIds | Where-Object { $_ } | Select-Object -Unique)
+}
+
+function Get-BackendProcessIds {
+    $processIds = @(Get-ListeningProcessIds)
+
+    if (Test-Path $PidFile) {
+        $savedPid = Get-Content -Path $PidFile -ErrorAction SilentlyContinue
+        if ($savedPid) {
+            $processIds += $savedPid
+        }
+    }
+
+    try {
+        $normalizedRoot = $ProjectRoot.ToLowerInvariant()
+        $backendProcesses = Get-CimInstance Win32_Process |
+            Where-Object {
+                $commandLine = if ($_.CommandLine) { $_.CommandLine.ToLowerInvariant() } else { "" }
+                $commandLine.Contains("uvicorn") -and
+                    $commandLine.Contains("main:app") -and
+                    $commandLine.Contains($normalizedRoot)
+            }
+
+        foreach ($backendProcess in $backendProcesses) {
+            $processIds += $backendProcess.ProcessId
+            if ($backendProcess.ParentProcessId) {
+                $processIds += $backendProcess.ParentProcessId
+            }
+        }
+    }
+    catch {
+        # La deteccion por puerto y pid file sigue funcionando si CIM no esta disponible.
+    }
+
+    @($processIds | Where-Object { $_ } | Select-Object -Unique)
+}
+
+function Test-ProcessRunning {
+    param([int]$ProcessId)
+
+    try {
+        Get-Process -Id $ProcessId -ErrorAction Stop | Out-Null
+        $true
+    }
+    catch {
+        $false
     }
 }
 
-function Start-Service {
+function Stop-BackendProcess {
+    param([int]$ProcessId)
+
+    taskkill.exe /PID $ProcessId /T /F | Out-Null
+
+    $stillListening = @(Get-ListeningProcessIds) -contains $ProcessId
+    if ($stillListening -or (Test-ProcessRunning -ProcessId $ProcessId)) {
+        try {
+            Stop-Process -Id $ProcessId -Force -ErrorAction Stop
+        }
+        catch {
+            # Se reporta abajo si sigue activo.
+        }
+    }
+
+    Start-Sleep -Milliseconds 250
+
+    $stillListening = @(Get-ListeningProcessIds) -contains $ProcessId
+    if ($stillListening) {
+        Write-Host "No se pudo detener el proceso ${ProcessId}."
+    }
+    else {
+        Write-Host "Proceso detenido: $ProcessId"
+    }
+}
+
+function Start-BackendService {
     $running = @(Get-ListeningProcessIds)
     if ($running.Count -gt 0) {
         Write-Host "El servicio ya esta encendido en http://127.0.0.1:$Port"
@@ -58,30 +144,23 @@ function Start-Service {
     }
 }
 
-function Stop-Service {
-    $processIds = @(Get-ListeningProcessIds)
-
-    if ((Test-Path $PidFile)) {
-        $savedPid = Get-Content -Path $PidFile -ErrorAction SilentlyContinue
-        if ($savedPid) {
-            $processIds += $savedPid
-        }
-    }
-
-    $processIds = @($processIds | Where-Object { $_ } | Select-Object -Unique)
+function Stop-BackendService {
+    $processIds = @(Get-BackendProcessIds)
     if ($processIds.Count -eq 0) {
         Write-Host "El servicio no esta encendido en el puerto $Port."
         return
     }
 
     foreach ($processId in $processIds) {
-        try {
-            Stop-Process -Id $processId -Force -ErrorAction Stop
-            Write-Host "Proceso detenido: $processId"
-        }
-        catch {
-            Write-Host "No se pudo detener el proceso ${processId}: $($_.Exception.Message)"
-        }
+        Stop-BackendProcess -ProcessId $processId
+    }
+
+    $remaining = @(Get-ListeningProcessIds)
+    if ($remaining.Count -gt 0) {
+        Write-Host "El puerto $Port sigue ocupado por PID: $($remaining -join ', ')"
+    }
+    else {
+        Write-Host "Servicio detenido."
     }
 
     if (Test-Path $PidFile) {
@@ -90,17 +169,18 @@ function Stop-Service {
 }
 
 function Main {
+    cls
     Write-Host ""
     Write-Host "Backend LLM"
     Write-Host "1. Start"
     Write-Host "2. Stop"
     Write-Host ""
 
-    $option = Read-Host "Elige una opcion"
+    $option = (Read-Host "Elige una opcion").Trim()
 
     switch ($option) {
-        "1" { Start-Service }
-        "2" { Stop-Service }
+        "1" { Start-BackendService }
+        "2" { Stop-BackendService }
         default { Write-Host "Opcion invalida." }
     }
 }

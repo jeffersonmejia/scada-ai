@@ -1,8 +1,42 @@
 # SCADA LLM Security Middleware
 
-Sistema académico orientado a producción para proteger solicitudes y respuestas de modelos de lenguaje en el dominio SCADA y redes eléctricas.
+Academic, production-oriented middleware for protecting language model requests and responses in SCADA and electrical-grid contexts.
 
-## Árbol del Proyecto
+The service sits inside a private `10.x.x.x` network between a web/API client, a RoBERTa classifier API, and a Mistral API. It classifies prompts, applies security rules, blocks risky input or output, and records audit events.
+
+## Table of Contents
+
+1. [Overview](#1-overview)
+2. [Documentation](#2-documentation)
+3. [Project Structure](#3-project-structure)
+4. [Configuration](#4-configuration)
+5. [Local Development](#5-local-development)
+6. [External Services](#6-external-services)
+7. [Main Endpoints](#7-main-endpoints)
+8. [Testing](#8-testing)
+9. [Security](#9-security)
+
+## 1. Overview
+
+This project provides a FastAPI security gateway for LLM usage in industrial-control scenarios.
+
+This repository runs only as middleware. It consumes:
+
+- RoBERTa classifier API through `ROBERTA_URL` and `ROBERTA_ENDPOINT`.
+- Mistral API through `MISTRAL_URL` and `MISTRAL_ENDPOINT`.
+
+The middleware validates prompts, requests classification, applies rule-based controls, sends allowed prompts to Mistral, validates generated output, and records audit logs.
+
+## 2. Documentation
+
+- [API Reference](docs/API.md): endpoints, examples, and common errors.
+- [Architecture](docs/ARCHITECTURE.md): middleware components and request flow.
+- [Model Card](docs/MODEL_CARD.md): intended use, limitations, and expected RoBERTa classifier behavior.
+- [Security Policy](SECURITY.md): vulnerability reporting, secret handling, and deployment notes.
+
+`SECURITY.md` stays at the repository root because platforms like GitHub detect it automatically. Longer technical documents live in `docs/`.
+
+## 3. Project Structure
 
 ```text
 project/
@@ -10,204 +44,117 @@ project/
 │   ├── api/
 │   ├── core/
 │   ├── middleware/
-│   ├── models/
 │   ├── rules/
 │   ├── schemas/
 │   ├── security/
 │   ├── services/
 │   ├── utils/
-│   └── logs/
+│   └── web/
+├── docs/
+│   ├── API.md
+│   ├── ARCHITECTURE.md
+│   └── MODEL_CARD.md
 ├── models/
 ├── tests/
-├── .env
+├── .env.example
 ├── main.py
-├── pytest.ini
+├── README.md
+├── run.ps1
+├── SECURITY.md
 └── requirements.txt
 ```
 
-## Modos de Ejecución
+## 4. Configuration
 
-PC-001, clasificador RoBERTa:
-
-```powershell
-$env:SERVICE_ROLE="classifier"
-uvicorn main:app --host 0.0.0.0 --port 8001
-```
-
-PC-003, middleware principal:
-
-```powershell
-$env:SERVICE_ROLE="middleware"
-uvicorn main:app --host 0.0.0.0 --port 8000
-```
-
-Desarrollo con hot reload:
-
-```powershell
-.\dev.ps1
-```
-
-PC-002 usa Ollama nativo:
-
-```powershell
-ollama serve
-ollama pull mistral:7b-instruct-v0.3-q8_0
-```
-
-## Variables `.env`
+Copy `.env.example` to `.env` and adjust the internal service URLs.
 
 ```env
-SERVICE_ROLE=middleware
-ROBERTA_MODEL_PATH=./models/roberta_scada
-ROBERTA_URL=http://10.147.0.10:8001
-OLLAMA_URL=http://10.147.0.20:11434
-OLLAMA_MODEL=mistral:7b-instruct-v0.3-q8_0
-API_KEY=super_secret_key
+ROBERTA_URL=http://10.x.x.x:8001
+ROBERTA_ENDPOINT=/prompt
+
+MISTRAL_URL=http://10.x.x.x:8002
+MISTRAL_ENDPOINT=/chat
+
+REQUEST_TIMEOUT_SECONDS=30
 ```
 
-## Endpoints
+### 4.1 Configuration Notes
 
-`GET /health`
+- `ROBERTA_URL` points to the internal RoBERTa classifier API.
+- `ROBERTA_ENDPOINT` points to the RoBERTa prompt classification endpoint.
+- `MISTRAL_URL` points to the internal Mistral API host.
+- `MISTRAL_ENDPOINT` points to the Mistral chat endpoint on that host.
+- The Mistral service owns its local model selection.
+- `REQUEST_TIMEOUT_SECONDS` controls backend service calls and the browser chat timeout.
+- `.env` must not be committed.
 
-```json
-{
-  "status": "healthy",
-  "roberta_loaded": true,
-  "ollama_available": true
-}
-```
+## 5. Local Development
 
-`POST /classify`, solo en `SERVICE_ROLE=classifier`.
-
-```json
-{
-  "text": "Explain Modbus at a high level."
-}
-```
-
-`POST /api/chat`, solo en `SERVICE_ROLE=middleware`.
+Start the PowerShell menu:
 
 ```powershell
-Invoke-RestMethod `
-  -Method POST `
-  -Uri http://localhost:8000/api/chat `
-  -Headers @{ "X-API-Key" = "super_secret_key" } `
-  -ContentType "application/json" `
-  -Body '{"prompt":"Explain what IEC 61850 is at a high level."}'
+.\run.ps1
 ```
 
-Cliente web:
+Menu options:
 
 ```text
-http://localhost:8000/
+1. Start
+2. Stop
 ```
 
-Respuesta permitida:
+The middleware starts at:
 
-```json
-{
-  "request_id": "uuid",
-  "decision": "allowed",
-  "classification": {
-    "label": "safe",
-    "score": 0.94
-  },
-  "triggered_rules": [],
-  "response": "..."
-}
+```text
+http://127.0.0.1:8000
 ```
 
-Respuesta bloqueada:
+The web client is available at:
 
-```json
-{
-  "request_id": "uuid",
-  "decision": "blocked_input",
-  "classification": {
-    "label": "malicious",
-    "score": 0.98
-  },
-  "triggered_rules": ["protocol-dnp3-control"],
-  "response": "Solicitud bloqueada por políticas de seguridad SCADA."
-}
+```text
+http://127.0.0.1:8000/
 ```
 
-Servicio degradado RoBERTa:
+## 6. External Services
 
-```json
-{
-  "status": "error",
-  "service": "roberta",
-  "message": "RoBERTa model not loaded"
-}
+### 6.1 RoBERTa Classifier API
+
+```env
+ROBERTA_URL=http://10.x.x.x:8001
+ROBERTA_ENDPOINT=/prompt
 ```
 
-Servicio degradado Ollama:
+Expected classifier endpoints:
 
-```json
-{
-  "status": "error",
-  "service": "ollama",
-  "message": "Ollama service unavailable"
-}
+- `GET /health`
+- `POST /prompt`
+
+### 6.2 Mistral API
+
+```env
+MISTRAL_URL=http://10.x.x.x:8002
+MISTRAL_ENDPOINT=/chat
 ```
 
-## Diagramas Mermaid
+The middleware posts allowed prompts to `MISTRAL_URL + MISTRAL_ENDPOINT`.
 
-Flujo principal:
+## 7. Main Endpoints
 
-```mermaid
-sequenceDiagram
-    participant C as Cliente
-    participant M as PC-003 Middleware
-    participant R as PC-001 RoBERTa
-    participant O as PC-002 Ollama
-    C->>M: POST /api/chat
-    M->>M: Valida API Key y audita
-    M->>R: POST /classify
-    R-->>M: safe/suspicious/malicious
-    M->>M: Reglas JSON de entrada
-    alt permitido
-        M->>O: POST /api/generate
-        O-->>M: respuesta Mistral
-        M->>M: Reglas JSON de salida
-        M-->>C: respuesta o bloqueo
-    else bloqueado
-        M-->>C: bloqueo
-    end
-```
+- `GET /health`
+- `GET /web/config`
+- `POST /web/chat`
+- `POST /api/chat`
 
-Despliegue:
+See [docs/API.md](docs/API.md) for full request and response contracts.
 
-```mermaid
-flowchart LR
-    Client[Cliente Web] --> PC003[PC-003 FastAPI Middleware]
-    PC003 --> PC001[PC-001 FastAPI RoBERTa]
-    PC003 --> PC002[PC-002 Ollama Mistral 7B]
-    PC001 -. ZeroTier HTTP .- PC003
-    PC002 -. ZeroTier HTTP .- PC003
-```
-
-## Módulos
-
-`app/api`: routers de salud, clasificación y chat.
-
-`app/core`: configuración, logging JSON, fábrica FastAPI y excepciones.
-
-`app/security`: validación de `X-API-Key`.
-
-`app/services`: clientes HTTP, clasificador RoBERTa, motor de reglas y auditoría JSONL.
-
-`app/rules`: reglas separadas por protocolos, subestaciones, centros de control, entrada, salida y patrones maliciosos.
-
-`app/schemas`: contratos Pydantic v2.
-
-`app/middleware`: manejo centralizado de errores.
-
-## Pruebas
+## 8. Testing
 
 ```powershell
 pytest
 ```
 
-Las pruebas cubren bloqueo por reglas, comportamiento degradado del clasificador y validación de API Key.
+The test suite covers rule-based blocking, degraded classifier behavior, and middleware routing behavior.
+
+## 9. Security
+
+See [SECURITY.md](SECURITY.md) for vulnerability reporting, secret handling, and deployment recommendations.

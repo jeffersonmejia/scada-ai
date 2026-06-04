@@ -7,6 +7,7 @@ from app.models.rule import Rule
 from app.schemas.classification import ClassificationResult
 
 logger = logging.getLogger(__name__)
+BLOCKED_RESPONSE = "We are sorry we can't do that"
 
 
 class RuleDecision:
@@ -33,13 +34,13 @@ class RuleEngine:
         blocked = classification.label == "malicious" or any(rule.decision == "block" for rule in triggered)
         if classification.label == "suspicious" and any(rule.severity == "high" for rule in triggered):
             blocked = True
-        message = "Solicitud bloqueada por políticas de seguridad SCADA." if blocked else "Solicitud permitida."
+        message = BLOCKED_RESPONSE if blocked else "Solicitud permitida."
         return RuleDecision(blocked, [rule.id for rule in triggered], message)
 
     def validate_output(self, response: str) -> RuleDecision:
         triggered = self._match(response, self.output_rules)
         blocked = any(rule.decision == "block" for rule in triggered)
-        message = "Respuesta bloqueada por políticas de salida." if blocked else "Respuesta permitida."
+        message = BLOCKED_RESPONSE if blocked else "Respuesta permitida."
         return RuleDecision(blocked, [rule.id for rule in triggered], message)
 
     def _load_many(self, *filenames: str) -> list[Rule]:
@@ -68,4 +69,3 @@ class RuleEngine:
                     matched.append(rule)
                     break
         return matched
-

@@ -3,18 +3,23 @@ from uuid import uuid4
 
 from fastapi import APIRouter, Depends, Request
 
-from app.api.deps import get_audit_service, get_ollama_client, get_roberta_client, get_rule_engine
+from app.api.deps import get_audit_service, get_mistral_client, get_roberta_client, get_rule_engine, get_settings
+from app.core.config import Settings
 from app.schemas.audit import AuditEvent
 from app.schemas.chat import ChatRequest, ChatResponse
 from app.schemas.classification import ClassificationResult
-from app.security.api_key import require_api_key
 from app.services.audit_service import AuditService
-from app.services.ollama_client import OllamaClient
+from app.services.mistral_client import MistralClient
 from app.services.roberta_client import RobertaClient
 from app.services.rule_engine import RuleEngine
 
-router = APIRouter(prefix="/api", tags=["middleware"], dependencies=[Depends(require_api_key)])
+router = APIRouter(prefix="/api", tags=["middleware"])
 web_router = APIRouter(prefix="/web", tags=["web-client"])
+
+
+@web_router.get("/config")
+async def web_config(settings: Settings = Depends(get_settings)) -> dict[str, float]:
+    return {"request_timeout_seconds": settings.request_timeout_seconds}
 
 
 @router.post("/chat", response_model=ChatResponse)
@@ -23,7 +28,7 @@ async def chat(
     request: Request,
     rules: RuleEngine = Depends(get_rule_engine),
     roberta: RobertaClient = Depends(get_roberta_client),
-    ollama: OllamaClient = Depends(get_ollama_client),
+    mistral: MistralClient = Depends(get_mistral_client),
     audit: AuditService = Depends(get_audit_service),
 ) -> ChatResponse:
     request_id = str(uuid4())
@@ -46,7 +51,7 @@ async def chat(
         response_text = input_decision.message
     else:
         inference_start = perf_counter()
-        generated_response = await ollama.generate(payload.prompt, request_id)
+        generated_response = await mistral.generate(payload.prompt, request_id)
         inference_ms = elapsed_ms(inference_start)
 
         output_validation_start = perf_counter()
@@ -97,10 +102,10 @@ async def web_chat(
     request: Request,
     rules: RuleEngine = Depends(get_rule_engine),
     roberta: RobertaClient = Depends(get_roberta_client),
-    ollama: OllamaClient = Depends(get_ollama_client),
+    mistral: MistralClient = Depends(get_mistral_client),
     audit: AuditService = Depends(get_audit_service),
 ) -> ChatResponse:
-    return await chat(payload, request, rules, roberta, ollama, audit)
+    return await chat(payload, request, rules, roberta, mistral, audit)
 
 
 def elapsed_ms(start: float) -> float:

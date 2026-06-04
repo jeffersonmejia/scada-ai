@@ -2,9 +2,8 @@ from functools import lru_cache
 
 from app.core.config import Settings
 from app.services.audit_service import AuditService
-from app.services.ollama_client import OllamaClient
+from app.services.mistral_client import MistralClient
 from app.services.roberta_client import RobertaClient
-from app.services.roberta_service import RobertaClassifier
 from app.services.rule_engine import RuleEngine
 
 
@@ -27,20 +26,18 @@ def get_audit_service() -> AuditService:
 @lru_cache
 def get_roberta_client() -> RobertaClient:
     settings = get_settings()
-    return RobertaClient(settings.roberta_url, settings.request_timeout_seconds)
-
-
-@lru_cache
-def get_ollama_client() -> OllamaClient:
-    settings = get_settings()
-    return OllamaClient(
-        base_url=settings.ollama_url,
-        model=settings.ollama_model,
+    return RobertaClient(
+        base_url=settings.roberta_url,
+        endpoint=settings.roberta_endpoint,
         timeout_seconds=settings.request_timeout_seconds,
     )
 
 
 @lru_cache
-def get_roberta_classifier() -> RobertaClassifier:
+def get_mistral_client() -> MistralClient:
     settings = get_settings()
-    return RobertaClassifier(settings.roberta_model_path)
+    return MistralClient(
+        base_url=settings.mistral_url,
+        endpoint=settings.mistral_endpoint,
+        timeout_seconds=settings.request_timeout_seconds,
+    )

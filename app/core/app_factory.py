@@ -1,10 +1,8 @@
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 
-from app.api.deps import get_roberta_classifier
 from app.api.routes_chat import router as chat_router
 from app.api.routes_chat import web_router
-from app.api.routes_classify import router as classify_router
 from app.api.routes_health import router as health_router
 from app.core.config import Settings
 from app.core.logging import configure_logging
@@ -24,13 +22,8 @@ def create_app() -> FastAPI:
 
     register_exception_handlers(app)
     app.include_router(health_router)
-
-    if settings.service_role == "classifier":
-        get_roberta_classifier()
-        app.include_router(classify_router)
-    else:
-        app.include_router(chat_router)
-        app.include_router(web_router)
-        app.mount("/", StaticFiles(directory="app/web", html=True), name="web")
+    app.include_router(chat_router)
+    app.include_router(web_router)
+    app.mount("/", StaticFiles(directory="app/web", html=True), name="web")
 
     return app
