@@ -18,8 +18,8 @@ class RobertaClient:
         try:
             async with httpx.AsyncClient(timeout=5.0) as client:
                 response = await client.get(f"{self.base_url}/health")
-            return response.status_code == 200 and response.json().get("roberta_loaded") is True
-        except (httpx.HTTPError, ValueError) as exc:
+            return response.status_code == 200
+        except httpx.HTTPError as exc:
             logger.error("RoBERTa health check failed: %s", exc)
             return False
 

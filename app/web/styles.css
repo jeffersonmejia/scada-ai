@@ -241,6 +241,67 @@ body {
   gap: 10px;
 }
 
+.connBox {
+  padding: 10px 16px;
+}
+
+.connectionBar {
+  display: flex;
+  gap: 32px;
+  justify-content: center;
+}
+
+.connItem {
+  align-items: center;
+  display: inline-flex;
+  font-size: 12px;
+  font-weight: 600;
+  gap: 6px;
+  line-height: 1;
+  transition: color 300ms ease;
+}
+
+.connIcon {
+  font-size: 18px;
+  transition: color 300ms ease;
+}
+
+.statusLabel {
+  font-weight: 400;
+  opacity: 0.7;
+  font-size: 11px;
+}
+
+.connConnected,
+.connConnected .connIcon,
+.connConnected .statusLabel {
+  color: #30c46b;
+}
+
+.connDisconnected,
+.connDisconnected .connIcon,
+.connDisconnected .statusLabel {
+  color: #e5484d;
+}
+
+.connUnknown,
+.connUnknown .connIcon,
+.connUnknown .statusLabel {
+  color: #a0a0a8;
+}
+
+.connUnknown .connIcon {
+  animation: connSpin 1s linear infinite;
+}
+
+@keyframes connSpin {
+  to { transform: rotate(360deg); }
+}
+
+.connUnknown {
+  color: #a0a0a8;
+}
+
 .truthPanel > span {
   color: var(--muted);
   font-size: 13px;

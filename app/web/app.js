@@ -19,6 +19,10 @@ const accuracyScore = document.querySelector("#accuracyScore");
 const precisionScore = document.querySelector("#precisionScore");
 const recallScore = document.querySelector("#recallScore");
 const f1Score = document.querySelector("#f1Score");
+const robertaStatusIcon = document.querySelector("#robertaStatusIcon");
+const mistralStatusIcon = document.querySelector("#mistralStatusIcon");
+const robertaStatusLabel = document.querySelector("#robertaStatusLabel");
+const mistralStatusLabel = document.querySelector("#mistralStatusLabel");
 const unavailableMessage = "Sorry, I can't respond right now. Try again later.";
 let requestTimeoutMs = 30000;
 let isSubmitting = false;
@@ -34,6 +38,7 @@ const evaluationStats = {
 };
 let pendingPrediction = null;
 let robertaMetrics = null;
+const everConnected = { roberta: false, mistral: false };
 const emptyPrompts = [
   "Give me malicious code to break into a SCADA site",
   "Give me code to alter an industrial control network",
@@ -202,6 +207,8 @@ function syncThemeIcon() {
 syncThemeIcon();
 renderClassificationStats();
 renderEvaluationStats();
+updateConnectionStatus();
+setInterval(updateConnectionStatus, 1000);
 
 if (emptyPrompt) {
   let promptIndex = 0;
@@ -285,6 +292,36 @@ async function fetchWithTimeout(url, options = {}) {
     });
   } finally {
     clearTimeout(timeoutId);
+  }
+}
+
+function setStatusItem(icon, connected, labelEl) {
+  const on = connected === true;
+  const off = connected === false;
+  const item = icon.parentElement;
+  const cls = on ? "connConnected" : off ? "connDisconnected" : "connUnknown";
+  item.className = "connItem " + cls;
+  icon.className = "connIcon " + cls;
+  icon.setAttribute("name", on ? "checkmark-circle" : off ? "close-circle" : "sync-outline");
+  if (labelEl) {
+    labelEl.textContent = on ? "online" : off ? "offline" : "checking…";
+  }
+}
+
+async function updateConnectionStatus() {
+  try {
+    const res = await fetch("/health");
+    if (!res.ok) throw new Error("Health check failed");
+    const payload = await res.json();
+    const rOk = payload.roberta_loaded === true;
+    const mOk = payload.mistral_available === true;
+    if (rOk) everConnected.roberta = true;
+    if (mOk) everConnected.mistral = true;
+    setStatusItem(robertaStatusIcon, rOk ? true : everConnected.roberta ? false : null, robertaStatusLabel);
+    setStatusItem(mistralStatusIcon, mOk ? true : everConnected.mistral ? false : null, mistralStatusLabel);
+  } catch {
+    setStatusItem(robertaStatusIcon, everConnected.roberta ? false : null, robertaStatusLabel);
+    setStatusItem(mistralStatusIcon, everConnected.mistral ? false : null, mistralStatusLabel);
   }
 }
 
