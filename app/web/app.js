@@ -243,7 +243,7 @@ async function modelsUnavailable() {
   if (!res.ok) return true;
 
   const payload = await res.json();
-  return payload.classifier_loaded !== true || payload.mistral_available !== true;
+  return payload.classifier_loaded !== true || payload.qwen_available !== true;
 }
 
 form.addEventListener("submit", async (event) => {
