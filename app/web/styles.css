@@ -948,8 +948,20 @@ button:active {
   width: 46px;
 }
 
+.sendButton[hidden] {
+  display: none;
+}
+
 .sendButton span {
   display: none;
+}
+
+.sendButton .stopGlyph {
+  background: #ffffff;
+  border-radius: 3px;
+  display: block;
+  height: 14px;
+  width: 14px;
 }
 
 .sendButton .buttonIcon {

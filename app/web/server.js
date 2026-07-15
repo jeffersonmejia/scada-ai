@@ -76,8 +76,13 @@ function proxyApi(req, res) {
   });
 
   proxyReq.on("error", () => {
+    if (res.destroyed || res.writableEnded) return;
     res.writeHead(503, { "Content-Type": "application/json; charset=utf-8" });
     res.end(JSON.stringify({ message: "Lo siento, en este momento no puedo responder. Intenta más tarde." }));
+  });
+
+  res.on("close", () => {
+    if (!res.writableEnded) proxyReq.destroy();
   });
 
   req.pipe(proxyReq);

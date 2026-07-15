@@ -9,6 +9,7 @@ const themeButton = document.querySelector("#themeButton");
 const messages = document.querySelector("#messages");
 const promptInput = document.querySelector("#prompt");
 const sendButton = document.querySelector("#sendButton");
+const stopButton = document.querySelector("#stopButton");
 const notPassedPercent = document.querySelector("#notPassedPercent");
 const passedPercent = document.querySelector("#passedPercent");
 const notPassedBar = document.querySelector("#notPassedBar");
@@ -22,6 +23,7 @@ const qwenStatusLabel = document.querySelector("#qwenStatusLabel");
 const unavailableMessage = "Sorry, we can't process your request right now. Please try again later.";
 let requestTimeoutMs = 30000;
 let isSubmitting = false;
+let activeRequestController = null;
 let clearFeedbackTimeoutId;
 const classificationStats = {
   notPassed: 0,
@@ -331,6 +333,14 @@ async function fetchWithTimeout(url, options = {}) {
   await configReady;
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), requestTimeoutMs);
+  const externalSignal = options.signal;
+  const abortFromExternalSignal = () => controller.abort(externalSignal.reason);
+
+  if (externalSignal?.aborted) {
+    abortFromExternalSignal();
+  } else {
+    externalSignal?.addEventListener("abort", abortFromExternalSignal, { once: true });
+  }
 
   try {
     return await fetch(url, {
@@ -339,7 +349,15 @@ async function fetchWithTimeout(url, options = {}) {
     });
   } finally {
     clearTimeout(timeoutId);
+    externalSignal?.removeEventListener("abort", abortFromExternalSignal);
   }
+}
+
+function setRequestControls(processing) {
+  sendButton.hidden = processing;
+  sendButton.disabled = processing;
+  stopButton.hidden = !processing;
+  stopButton.disabled = false;
 }
 
 function setStatusItem(icon, connected, labelEl) {
@@ -389,8 +407,8 @@ async function updateConnectionStatus() {
   }
 }
 
-async function modelsUnavailable() {
-  const res = await fetchWithTimeout("/health");
+async function modelsUnavailable(signal) {
+  const res = await fetchWithTimeout("/health", { signal });
   if (!res.ok) return true;
 
   const payload = await res.json();
@@ -405,16 +423,17 @@ form.addEventListener("submit", async (event) => {
   if (!prompt) return;
 
   isSubmitting = true;
+  activeRequestController = new AbortController();
   addMessage("user", prompt);
   promptInput.value = "";
   promptInput.style.height = "auto";
-  sendButton.disabled = true;
+  setRequestControls(true);
   setProcessingStatus(classifierStatusIcon, classifierStatusLabel, "classifying…");
   setProcessingStatus(qwenStatusIcon, qwenStatusLabel, "processing…");
   const thinking = addThinking();
 
   try {
-    if (prompt.toLowerCase() === "hola" && await modelsUnavailable()) {
+    if (prompt.toLowerCase() === "hola" && await modelsUnavailable(activeRequestController.signal)) {
       thinking.remove();
       addMessage("assistant", unavailableMessage, "service unavailable", {
         status: "error",
@@ -428,7 +447,8 @@ form.addEventListener("submit", async (event) => {
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({ prompt })
+      body: JSON.stringify({ prompt }),
+      signal: activeRequestController.signal
     });
     const payload = await res.json();
     thinking.remove();
@@ -441,10 +461,17 @@ form.addEventListener("submit", async (event) => {
     thinking.remove();
   } finally {
     isSubmitting = false;
-    sendButton.disabled = false;
+    activeRequestController = null;
+    setRequestControls(false);
     updateConnectionStatus();
     promptInput.focus();
   }
+});
+
+stopButton.addEventListener("click", () => {
+  if (!isSubmitting || !activeRequestController) return;
+  stopButton.disabled = true;
+  activeRequestController.abort(new DOMException("Response stopped by user", "AbortError"));
 });
 
 themeButton.addEventListener("click", async () => {

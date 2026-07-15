@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Scada IA</title>
     <link rel="icon" type="image/png" href="/assets/favicon.png?v=1" />
-    <link rel="stylesheet" href="/styles.css?v=26" />
+    <link rel="stylesheet" href="/styles.css?v=29" />
   </head>
   <body>
     <div class="liquid liquidOne"></div>
@@ -25,6 +25,9 @@
             <textarea id="prompt" name="prompt" rows="1" placeholder="Write your message..." autofocus></textarea>
             <button id="sendButton" class="sendButton" type="submit" title="Send" aria-label="Send">
               <ion-icon name="arrow-up-outline" class="buttonIcon" aria-hidden="true"></ion-icon>
+            </button>
+            <button id="stopButton" class="sendButton stopButton" type="button" title="Stop response" aria-label="Stop response" hidden>
+              <span class="stopGlyph" aria-hidden="true"></span>
             </button>
           </form>
         </section>
@@ -112,6 +115,7 @@
         liveReload.addEventListener("reload", () => window.location.reload());
       }
     </script>
-    <script src="/app.js?v=18"></script>
+    <script src="/temporary-prompts-loader.js?v=3"></script>
+    <script src="/app.js?v=19"></script>
   </body>
 </html>
