@@ -1,8 +1,8 @@
 :root {
   color-scheme: light;
   --bg: #e9e9ef;
-  --surface: rgba(255, 255, 255, 0.82);
-  --surface-strong: rgba(255, 255, 255, 0.78);
+  --surface: #ffffff;
+  --surface-strong: #f7f7f8;
   --ink: #1d1d1f;
   --muted: #6e6e73;
   --line: rgba(255, 255, 255, 0.58);
@@ -10,10 +10,9 @@
   --accent: #ff2d55;
   --accent-hot: #ff3b8d;
   --accent-soft: rgba(255, 45, 85, 0.07);
-  --glass-sheen: linear-gradient(145deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.44) 42%, rgba(255, 45, 85, 0.035) 100%);
-  --assistant-bubble: rgba(229, 229, 234, 0.72);
-  --user-bubble: rgba(242, 242, 247, 0.88);
-  --field: rgba(255, 255, 255, 0.86);
+  --assistant-bubble: #e5e5ea;
+  --user-bubble: #f2f2f7;
+  --field: #ffffff;
   --bubble-shadow: none;
   --shadow: none;
 }
@@ -21,8 +20,8 @@
 :root.dark {
   color-scheme: dark;
   --bg: #111113;
-  --surface: rgba(255, 255, 255, 0.1);
-  --surface-strong: rgba(255, 255, 255, 0.14);
+  --surface: #1c1c1e;
+  --surface-strong: #2c2c2e;
   --ink: #f5f5f7;
   --muted: #b7b7bd;
   --line: rgba(255, 255, 255, 0.18);
@@ -30,10 +29,9 @@
   --accent: #ff2d55;
   --accent-hot: #ff3b8d;
   --accent-soft: rgba(255, 45, 85, 0.1);
-  --glass-sheen: linear-gradient(145deg, rgba(255, 255, 255, 0.22) 0%, rgba(255, 255, 255, 0.05) 42%, rgba(255, 45, 85, 0.08) 100%);
-  --assistant-bubble: rgba(58, 58, 62, 0.74);
-  --user-bubble: rgba(255, 45, 85, 0.86);
-  --field: rgba(22, 22, 26, 0.56);
+  --assistant-bubble: #3a3a3e;
+  --user-bubble: #ff2d55;
+  --field: #1c1c1e;
   --bubble-shadow: none;
   --shadow: none;
 }
@@ -70,31 +68,24 @@ body {
   display: grid;
   height: 100dvh;
   margin: 0 auto;
-  padding: 88px 18px 22px;
+  padding: 18px;
   place-items: center;
   width: 100%;
 }
 
 .chatSurface {
-  background: var(--glass-sheen), var(--surface);
-  background-blend-mode: screen, normal;
-  backdrop-filter: blur(34px) saturate(210%) contrast(1.05);
+  background: var(--surface);
   border: 1px solid var(--line);
   border-radius: 3.5rem;
   box-shadow: var(--shadow);
   display: grid;
   grid-template-columns: minmax(0, 1fr) clamp(260px, 24vw, 340px);
-  height: min(820px, calc(100dvh - 110px));
+  height: min(900px, calc(100dvh - 36px));
   max-width: 1360px;
   min-height: 0;
   overflow: hidden;
   position: relative;
   width: min(calc(100vw - 36px), 1360px);
-}
-
-:root.dark .chatSurface {
-  background: var(--glass-sheen), var(--surface);
-  background-blend-mode: screen, normal;
 }
 
 .chatSurface::before {
@@ -126,8 +117,12 @@ body {
   z-index: 1;
 }
 
+:root:not(.dark) .metricsPanel {
+  border-left-color: rgba(60, 60, 67, 0.22);
+}
+
 .metricsBox {
-  background: color-mix(in srgb, var(--surface-strong) 58%, transparent);
+  background: var(--surface-strong);
   border: 1px solid var(--line);
   border-radius: 1.15rem;
   display: grid;
@@ -136,45 +131,17 @@ body {
 }
 
 :root:not(.dark) .metricsBox {
-  background: rgba(255, 255, 255, 0.76);
+  background: var(--surface-strong);
   border-color: rgba(60, 60, 67, 0.2);
 }
 
 :root.dark .metricsBox {
-  background: rgba(255, 255, 255, 0.075);
+  background: var(--surface-strong);
   border-color: rgba(255, 255, 255, 0.2);
 }
 
 .scoreBox {
   gap: 14px;
-}
-
-.metricsHeader {
-  align-items: center;
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
-}
-
-.metricsHeader span {
-  color: var(--muted);
-  font-size: 13px;
-  font-weight: 600;
-  line-height: 1.2;
-}
-
-.metricsHeader strong {
-  align-items: center;
-  background: color-mix(in srgb, var(--accent) 12%, transparent);
-  border: 1px solid color-mix(in srgb, var(--accent) 22%, var(--line));
-  border-radius: 999px;
-  color: var(--accent);
-  display: inline-flex;
-  font-size: 13px;
-  height: 30px;
-  justify-content: center;
-  min-width: 36px;
-  padding: 0 10px;
 }
 
 .bars {
@@ -241,14 +208,14 @@ body {
   gap: 10px;
 }
 
-.connBox {
-  padding: 10px 16px;
-}
-
 .connectionBar {
   display: flex;
-  gap: 32px;
-  justify-content: center;
+  gap: 12px;
+  justify-content: space-between;
+}
+
+.statusBox {
+  padding: 12px 16px;
 }
 
 .connItem {
@@ -412,24 +379,10 @@ body {
   line-height: 1;
 }
 
-.topbar {
-  align-items: center;
-  backdrop-filter: blur(34px) saturate(210%) contrast(1.06);
-  background: var(--glass-sheen), var(--surface-strong);
-  background-blend-mode: screen, normal;
-  border: 1px solid var(--line);
-  border-radius: 999px;
-  display: flex;
-  justify-content: space-between;
-  left: 50%;
-  margin: 0;
-  min-height: 64px;
-  padding: 8px 10px 8px 14px;
-  position: fixed;
-  top: 14px;
-  transform: translateX(-50%);
-  width: min(calc(100% - 28px), 760px);
-  z-index: 10;
+.panelNav {
+  display: grid;
+  gap: 12px;
+  padding: 2px 2px 8px;
 }
 
 .brandMark {
@@ -463,6 +416,14 @@ body {
 .topActions {
   display: flex;
   gap: 9px;
+}
+
+.panelNav .topActions {
+  width: 100%;
+}
+
+.panelNav #newChatButton {
+  flex: 1;
 }
 
 h1 {
@@ -546,7 +507,6 @@ p {
 }
 
 .bubble {
-  backdrop-filter: blur(28px) saturate(190%) contrast(1.04);
   border: 1px solid var(--line);
   border-radius: 1.05rem;
   box-shadow: var(--bubble-shadow);
@@ -618,9 +578,7 @@ p {
 
 .composer {
   align-items: end;
-  backdrop-filter: blur(38px) saturate(220%) contrast(1.08);
-  background: var(--glass-sheen), var(--field);
-  background-blend-mode: screen, normal;
+  background: var(--field);
   border: 1px solid var(--line);
   border-radius: 1.25rem;
   display: grid;
@@ -820,7 +778,7 @@ button:active {
 
 @media (max-width: 760px) {
   .shell {
-    padding: 76px 0 0;
+    padding: 0;
   }
 
   .chatSurface {
@@ -828,7 +786,7 @@ button:active {
     border-radius: 1.6rem 1.6rem 0 0;
     grid-template-columns: 1fr;
     grid-template-rows: minmax(0, 1fr) auto;
-    height: calc(100dvh - 76px);
+    height: 100dvh;
     max-width: none;
     width: 100%;
   }
@@ -840,13 +798,13 @@ button:active {
     padding: 12px 14px max(12px, env(safe-area-inset-bottom));
   }
 
+  :root:not(.dark) .metricsPanel {
+    border-top-color: rgba(60, 60, 67, 0.22);
+  }
+
   .metricsBox {
     gap: 12px;
     padding: 12px;
-  }
-
-  .metricsHeader {
-    min-height: 30px;
   }
 
   .bars {
@@ -872,13 +830,6 @@ button:active {
 
   .barLabel strong {
     font-size: 16px;
-  }
-
-  .topbar {
-    top: 8px;
-    min-height: 58px;
-    padding: 7px 8px 7px 12px;
-    width: calc(100% - 20px);
   }
 
   .musicGlyph {

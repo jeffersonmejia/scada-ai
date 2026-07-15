@@ -1,3 +1,5 @@
+import asyncio
+
 from fastapi import APIRouter, Depends
 
 from app.api.deps import get_classifier_client, get_qwen_client
@@ -15,8 +17,10 @@ async def health(
 ) -> HealthResponse:
     errors: list[str] = []
 
-    classifier_loaded = await classifier_client.health()
-    qwen_available = await qwen_client.health()
+    classifier_loaded, qwen_available = await asyncio.gather(
+        classifier_client.health(),
+        qwen_client.health(),
+    )
     if not classifier_loaded:
         errors.append("Classifier API unavailable")
     if not qwen_available:

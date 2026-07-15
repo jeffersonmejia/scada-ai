@@ -4,29 +4,12 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Scada IA</title>
-    <link rel="stylesheet" href="/styles.css" />
+    <link rel="stylesheet" href="/styles.css?v=8" />
   </head>
   <body>
     <div class="liquid liquidOne"></div>
     <div class="liquid liquidTwo"></div>
     <main class="shell">
-      <header class="topbar">
-        <div class="brandMark">
-          <span class="musicGlyph">
-            <ion-icon name="hardware-chip-outline" class="brandIcon" aria-hidden="true"></ion-icon>
-          </span>
-          <h1>Scada IA</h1>
-        </div>
-        <div class="topActions">
-          <button id="newChatButton" class="themeButton" title="New chat" aria-label="New chat">
-            <ion-icon name="add-outline" class="buttonIcon" aria-hidden="true"></ion-icon>
-            <span>New chat</span>
-          </button>
-          <button id="themeButton" class="themeButton" title="Change theme" aria-label="Change theme">
-            <ion-icon name="moon-outline" class="buttonIcon" aria-hidden="true"></ion-icon>
-          </button>
-        </div>
-      </header>
       <section class="chatSurface">
         <section class="chatPanel">
           <section id="messages" class="messages" aria-live="polite">
@@ -45,12 +28,38 @@
         </section>
 
         <aside class="metricsPanel" aria-label="Classification metrics">
-          <section class="metricsBox">
-            <div class="metricsHeader">
-              <span>Classifier</span>
-              <strong id="metricsTotal">0</strong>
+          <header class="panelNav">
+            <div class="brandMark">
+              <span class="musicGlyph">
+                <ion-icon name="hardware-chip-outline" class="brandIcon" aria-hidden="true"></ion-icon>
+              </span>
+              <h1>Scada IA</h1>
             </div>
+            <div class="topActions">
+              <button id="newChatButton" class="themeButton" title="New chat" aria-label="New chat">
+                <ion-icon name="add-outline" class="buttonIcon" aria-hidden="true"></ion-icon>
+                <span>New chat</span>
+              </button>
+              <button id="themeButton" class="themeButton" title="Change theme" aria-label="Change theme">
+                <ion-icon name="moon-outline" class="buttonIcon" aria-hidden="true"></ion-icon>
+              </button>
+            </div>
+          </header>
 
+          <section class="metricsBox statusBox">
+            <div class="connectionBar">
+              <span class="connItem">
+                <ion-icon id="classifierStatusIcon" name="sync-outline" class="connIcon connUnknown"></ion-icon>
+                Classifier <span id="classifierStatusLabel" class="statusLabel">checking…</span>
+              </span>
+              <span class="connItem">
+                <ion-icon id="qwenStatusIcon" name="sync-outline" class="connIcon connUnknown"></ion-icon>
+                Qwen <span id="qwenStatusLabel" class="statusLabel">checking…</span>
+              </span>
+            </div>
+          </section>
+
+          <section class="metricsBox">
             <div class="bars" aria-live="polite">
               <div class="barRow">
                 <div class="barLabel">
@@ -75,19 +84,6 @@
               </div>
             </div>
           </section>
-
-          <section class="metricsBox connBox">
-            <div class="connectionBar">
-              <span class="connItem">
-                <ion-icon id="classifierStatusIcon" name="sync-outline" class="connIcon connUnknown"></ion-icon>
-                Classifier <span id="classifierStatusLabel" class="statusLabel">checking…</span>
-              </span>
-              <span class="connItem">
-                <ion-icon id="qwenStatusIcon" name="sync-outline" class="connIcon connUnknown"></ion-icon>
-                Qwen <span id="qwenStatusLabel" class="statusLabel">checking…</span>
-              </span>
-            </div>
-          </section>
         </aside>
       </section>
     </main>
@@ -99,6 +95,6 @@
         liveReload.addEventListener("reload", () => window.location.reload());
       }
     </script>
-    <script src="/app.js"></script>
+    <script src="/app.js?v=3"></script>
   </body>
 </html>
