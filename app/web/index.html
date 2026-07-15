@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Scada IA</title>
-    <link rel="stylesheet" href="/styles.css?v=8" />
+    <link rel="stylesheet" href="/styles.css?v=16" />
   </head>
   <body>
     <div class="liquid liquidOne"></div>
@@ -14,6 +14,7 @@
         <section class="chatPanel">
           <section id="messages" class="messages" aria-live="polite">
             <section id="emptyState" class="emptyState">
+              <img class="emptyIllustration" src="/assets/1.svg?v=2" alt="" aria-hidden="true" />
               <h2>What do you want to check today?</h2>
               <p id="emptyPrompt">Detect malicious code instructions</p>
             </section>
@@ -36,9 +37,9 @@
               <h1>Scada IA</h1>
             </div>
             <div class="topActions">
-              <button id="newChatButton" class="themeButton" title="New chat" aria-label="New chat">
-                <ion-icon name="add-outline" class="buttonIcon" aria-hidden="true"></ion-icon>
-                <span>New chat</span>
+              <button id="clearChatButton" class="themeButton clearChatButton" title="Clear chat" aria-label="Clear chat">
+                <ion-icon name="trash-outline" class="buttonIcon" aria-hidden="true"></ion-icon>
+                <span>Clear chat</span>
               </button>
               <button id="themeButton" class="themeButton" title="Change theme" aria-label="Change theme">
                 <ion-icon name="moon-outline" class="buttonIcon" aria-hidden="true"></ion-icon>
@@ -87,6 +88,28 @@
         </aside>
       </section>
     </main>
+
+    <dialog id="clearChatDialog" class="confirmDialog" aria-labelledby="clearChatDialogTitle" aria-describedby="clearChatDialogDescription">
+      <div class="confirmDialogContent">
+        <div class="confirmDialogIcon" aria-hidden="true">
+          <ion-icon name="trash-outline"></ion-icon>
+        </div>
+        <h2 id="clearChatDialogTitle">Clear this chat?</h2>
+        <p id="clearChatDialogDescription">This will permanently remove the current conversation.</p>
+        <div class="confirmDialogActions">
+          <button id="cancelClearChatButton" class="dialogButton cancelDialogButton" type="button">Cancel</button>
+          <button id="confirmClearChatButton" class="dialogButton confirmDialogButton" type="button">Clear chat</button>
+        </div>
+      </div>
+    </dialog>
+
+    <div id="chatToast" class="toast" role="status" aria-live="polite" aria-atomic="true">
+      <span class="toastIcon" aria-hidden="true">
+        <ion-icon name="checkmark-outline"></ion-icon>
+      </span>
+      <span>Chat deleted</span>
+    </div>
+
     <script type="module" src="/vendor/ionicons/ionicons.esm.js"></script>
     <script nomodule src="/vendor/ionicons/ionicons.js"></script>
     <script>
@@ -95,6 +118,6 @@
         liveReload.addEventListener("reload", () => window.location.reload());
       }
     </script>
-    <script src="/app.js?v=3"></script>
+    <script src="/app.js?v=13"></script>
   </body>
 </html>

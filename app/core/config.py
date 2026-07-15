@@ -10,7 +10,7 @@ class Settings(BaseSettings):
     log_level: str = "INFO"
 
     classifier_url: str = "http://127.0.0.1:8001"
-    classifier_endpoint: str = "/prompt"
+    classifier_endpoint: str = "/classify"
 
     qwen_url: str = "http://127.0.0.1:8002"
     qwen_endpoint: str = "/chat"

@@ -28,7 +28,7 @@ class ClassifierClient:
             async with httpx.AsyncClient(timeout=self.timeout) as client:
                 response = await client.post(
                     f"{self.base_url}{self.endpoint}",
-                    json={"text": text, "request_id": request_id},
+                    json={"prompt": text},
                 )
             if response.status_code == 503:
                 raise ServiceUnavailableError("Classifier model not loaded", service="classifier")

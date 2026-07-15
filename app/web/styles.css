@@ -56,8 +56,8 @@ body {
 
 ::view-transition-old(root),
 ::view-transition-new(root) {
-  animation-duration: 260ms;
-  animation-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1);
+  animation: none;
+  mix-blend-mode: normal;
 }
 
 .liquid {
@@ -192,11 +192,11 @@ body {
 }
 
 .notPassedBar {
-  background: linear-gradient(90deg, #e5484d, var(--accent));
+  background: #e5484d;
 }
 
 .passedBar {
-  background: linear-gradient(90deg, #1f9d67, #4cc38a);
+  background: #1f9d67;
 }
 
 .barCount {
@@ -422,7 +422,7 @@ body {
   width: 100%;
 }
 
-.panelNav #newChatButton {
+.panelNav #clearChatButton {
   flex: 1;
 }
 
@@ -473,6 +473,15 @@ p {
   text-align: center;
 }
 
+.emptyIllustration {
+  display: block;
+  height: auto;
+  max-height: 250px;
+  max-width: min(42vw, 320px);
+  object-fit: contain;
+  width: 100%;
+}
+
 .emptyState p {
   color: var(--muted);
   font-size: 15px;
@@ -480,6 +489,13 @@ p {
   margin: 0;
   min-height: 22px;
   transition: opacity 180ms ease;
+}
+
+.emptyState p::after {
+  animation: typingCaret 720ms step-end infinite;
+  color: var(--accent);
+  content: "|";
+  margin-left: 2px;
 }
 
 .messages::-webkit-scrollbar {
@@ -496,6 +512,10 @@ p {
 .message {
   animation: messageIn 260ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
   display: flex;
+}
+
+.message.firstMessage {
+  animation: firstMessageRise 560ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 .message.user {
@@ -665,14 +685,17 @@ button:active {
   width: 40px;
 }
 
-#newChatButton {
+#clearChatButton {
+  background: rgba(229, 72, 77, 0.07);
+  border-color: rgba(229, 72, 77, 0.14);
+  color: rgba(190, 45, 51, 0.78);
   gap: 6px;
   padding: 0 12px 0 10px;
   transition: background 150ms ease, border-color 150ms ease, color 150ms ease, transform 150ms ease;
   width: auto;
 }
 
-#newChatButton span {
+#clearChatButton span {
   font-size: 13px;
   font-weight: 500;
   line-height: 1;
@@ -689,9 +712,167 @@ button:active {
   color: #3c3c43;
 }
 
-:root:not(.dark) #newChatButton span {
-  color: #6e6e73;
+:root:not(.dark) #clearChatButton span {
+  color: rgba(190, 45, 51, 0.78);
   font-weight: 500;
+}
+
+#clearChatButton:hover {
+  background: rgba(229, 72, 77, 0.11);
+  border-color: rgba(229, 72, 77, 0.2);
+  color: rgba(190, 45, 51, 0.9);
+}
+
+:root.dark #clearChatButton {
+  background: rgba(255, 105, 110, 0.08);
+  border-color: rgba(255, 105, 110, 0.16);
+  color: rgba(255, 145, 149, 0.82);
+}
+
+:root.dark #clearChatButton:hover {
+  background: rgba(255, 105, 110, 0.13);
+  border-color: rgba(255, 105, 110, 0.22);
+  color: rgba(255, 165, 168, 0.94);
+}
+
+.confirmDialog {
+  background: transparent;
+  border: 0;
+  color: var(--ink);
+  margin: auto;
+  max-width: min(400px, calc(100vw - 32px));
+  padding: 0;
+  width: 100%;
+}
+
+.confirmDialog::backdrop {
+  background: rgba(10, 10, 12, 0.38);
+  backdrop-filter: blur(5px);
+}
+
+.confirmDialog[open] {
+  animation: dialogIn 180ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.confirmDialogContent {
+  align-items: center;
+  background: color-mix(in srgb, var(--surface) 96%, transparent);
+  border: 1px solid var(--line);
+  border-radius: 26px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.16);
+  display: flex;
+  flex-direction: column;
+  padding: 26px;
+  text-align: center;
+}
+
+.confirmDialogIcon {
+  align-items: center;
+  background: rgba(229, 72, 77, 0.09);
+  border: 1px solid rgba(229, 72, 77, 0.14);
+  border-radius: 999px;
+  color: rgba(210, 55, 60, 0.85);
+  display: flex;
+  height: 46px;
+  justify-content: center;
+  margin-bottom: 16px;
+  width: 46px;
+}
+
+.confirmDialogIcon ion-icon {
+  font-size: 21px;
+}
+
+.confirmDialog h2 {
+  font-size: 21px;
+  font-weight: 700;
+}
+
+.confirmDialog p {
+  display: block;
+  line-height: 1.45;
+  margin-top: 8px;
+  max-width: 290px;
+}
+
+.confirmDialogActions {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: 1fr 1fr;
+  margin-top: 22px;
+  width: 100%;
+}
+
+.dialogButton {
+  border: 1px solid var(--line);
+  height: 42px;
+}
+
+.cancelDialogButton {
+  background: var(--surface-strong);
+  color: var(--ink);
+}
+
+.cancelDialogButton:hover {
+  background: color-mix(in srgb, var(--surface-strong) 88%, var(--ink));
+}
+
+.confirmDialogButton {
+  background: rgba(229, 72, 77, 0.1);
+  border-color: rgba(229, 72, 77, 0.16);
+  color: rgba(200, 45, 51, 0.9);
+}
+
+.confirmDialogButton:hover {
+  background: rgba(229, 72, 77, 0.16);
+}
+
+:root.dark .confirmDialogButton {
+  color: rgba(255, 145, 149, 0.9);
+}
+
+.toast {
+  align-items: center;
+  background: color-mix(in srgb, var(--surface) 96%, transparent);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  box-shadow: 0 18px 55px rgba(0, 0, 0, 0.18);
+  color: var(--ink);
+  display: flex;
+  font-size: 13px;
+  font-weight: 600;
+  gap: 10px;
+  left: 50%;
+  opacity: 0;
+  padding: 12px 17px 12px 12px;
+  pointer-events: none;
+  position: fixed;
+  top: 50%;
+  transform: translate(-50%, -50%) scale(0.96);
+  transition: opacity 180ms ease, transform 180ms ease;
+  z-index: 20;
+}
+
+.toast.isVisible {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.toastIcon {
+  align-items: center;
+  background: rgba(31, 157, 103, 0.11);
+  border: 1px solid rgba(31, 157, 103, 0.16);
+  border-radius: 999px;
+  color: #1f9d67;
+  display: flex;
+  height: 30px;
+  justify-content: center;
+  width: 30px;
+}
+
+.toastIcon ion-icon {
+  font-size: 17px;
+  stroke-width: 2.4;
 }
 
 .iconButton:hover,
@@ -739,6 +920,36 @@ button:active {
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+@keyframes firstMessageRise {
+  from {
+    opacity: 0;
+    transform: translateY(38vh) scale(0.96);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes typingCaret {
+  50% {
+    opacity: 0;
+  }
+}
+
+@keyframes dialogIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
   }
 }
 
