@@ -47,7 +47,7 @@
         <aside class="metricsPanel" aria-label="Classification metrics">
           <section class="metricsBox">
             <div class="metricsHeader">
-              <span>RoBERTa</span>
+              <span>Classifier</span>
               <strong id="metricsTotal">0</strong>
             </div>
 
@@ -76,44 +76,15 @@
             </div>
           </section>
 
-          <section class="metricsBox scoreBox">
-            <div class="truthPanel">
-              <span>Ground truth</span>
-              <div class="truthActions">
-                <button id="truthMalwareButton" class="truthButton" type="button" disabled>Not passed</button>
-                <button id="truthCleanButton" class="truthButton" type="button" disabled>Passed</button>
-              </div>
-            </div>
-
-            <div class="scoreGrid" aria-live="polite">
-              <div class="scoreItem">
-                <span>Accuracy</span>
-                <strong id="accuracyScore">N/A</strong>
-              </div>
-              <div class="scoreItem">
-                <span>Precision</span>
-                <strong id="precisionScore">N/A</strong>
-              </div>
-              <div class="scoreItem">
-                <span>Recall</span>
-                <strong id="recallScore">N/A</strong>
-              </div>
-              <div class="scoreItem">
-                <span>F1 score</span>
-                <strong id="f1Score">N/A</strong>
-              </div>
-            </div>
-          </section>
-
           <section class="metricsBox connBox">
             <div class="connectionBar">
               <span class="connItem">
-                <ion-icon id="robertaStatusIcon" name="sync-outline" class="connIcon connUnknown"></ion-icon>
-                RoBERTa <span id="robertaStatusLabel" class="statusLabel">checking…</span>
+                <ion-icon id="classifierStatusIcon" name="sync-outline" class="connIcon connUnknown"></ion-icon>
+                Classifier <span id="classifierStatusLabel" class="statusLabel">checking…</span>
               </span>
               <span class="connItem">
                 <ion-icon id="mistralStatusIcon" name="sync-outline" class="connIcon connUnknown"></ion-icon>
-                Mistral <span id="mistralStatusLabel" class="statusLabel">checking…</span>
+                Qwen <span id="mistralStatusLabel" class="statusLabel">checking…</span>
               </span>
             </div>
           </section>

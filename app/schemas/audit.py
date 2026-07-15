@@ -8,8 +8,8 @@ class AuditEvent(BaseModel):
     timestamp: datetime = Field(default_factory=lambda: datetime.now(UTC))
     client_host: str | None = None
     prompt: str
-    roberta_label: str
-    roberta_score: float
+    classifier_label: str
+    classifier_score: float
     triggered_rules: list[str]
     final_decision: str
     generated_response: str

@@ -8,7 +8,7 @@ from app.schemas.classification import ClassificationResult
 logger = logging.getLogger(__name__)
 
 
-class RobertaClient:
+class ClassifierClient:
     def __init__(self, base_url: str, endpoint: str, timeout_seconds: float) -> None:
         self.base_url = base_url.rstrip("/")
         self.endpoint = endpoint if endpoint.startswith("/") else f"/{endpoint}"
@@ -20,7 +20,7 @@ class RobertaClient:
                 response = await client.get(f"{self.base_url}/health")
             return response.status_code == 200
         except httpx.HTTPError as exc:
-            logger.error("RoBERTa health check failed: %s", exc)
+            logger.error("Classifier health check failed: %s", exc)
             return False
 
     async def classify(self, text: str, request_id: str) -> ClassificationResult:
@@ -31,11 +31,11 @@ class RobertaClient:
                     json={"text": text, "request_id": request_id},
                 )
             if response.status_code == 503:
-                raise ServiceUnavailableError("RoBERTa model not loaded", service="roberta")
+                raise ServiceUnavailableError("Classifier model not loaded", service="classifier")
             response.raise_for_status()
             return ClassificationResult.model_validate(response.json())
         except ServiceUnavailableError:
             raise
         except (httpx.HTTPError, ValueError) as exc:
-            logger.error("RoBERTa request failed for %s: %s", request_id, exc)
-            raise ServiceUnavailableError("RoBERTa API unavailable", service="roberta") from exc
+            logger.error("Classifier request failed for %s: %s", request_id, exc)
+            raise ServiceUnavailableError("Classifier API unavailable", service="classifier") from exc

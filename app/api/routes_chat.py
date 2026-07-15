@@ -3,14 +3,14 @@ from uuid import uuid4
 
 from fastapi import APIRouter, Depends, Request
 
-from app.api.deps import get_audit_service, get_mistral_client, get_roberta_client, get_rule_engine, get_settings
+from app.api.deps import get_audit_service, get_classifier_client, get_qwen_client, get_rule_engine, get_settings
 from app.core.config import Settings
 from app.schemas.audit import AuditEvent
 from app.schemas.chat import ChatRequest, ChatResponse
 from app.schemas.classification import ClassificationResult
 from app.services.audit_service import AuditService
-from app.services.mistral_client import MistralClient
-from app.services.roberta_client import RobertaClient
+from app.services.qwen_client import QwenClient
+from app.services.classifier_client import ClassifierClient
 from app.services.rule_engine import RuleEngine
 
 router = APIRouter(prefix="/api", tags=["middleware"])
@@ -27,15 +27,15 @@ async def chat(
     payload: ChatRequest,
     request: Request,
     rules: RuleEngine = Depends(get_rule_engine),
-    roberta: RobertaClient = Depends(get_roberta_client),
-    mistral: MistralClient = Depends(get_mistral_client),
+    classifier: ClassifierClient = Depends(get_classifier_client),
+    qwen: QwenClient = Depends(get_qwen_client),
     audit: AuditService = Depends(get_audit_service),
 ) -> ChatResponse:
     request_id = str(uuid4())
     total_start = perf_counter()
 
     classification_start = perf_counter()
-    classification = await roberta.classify(payload.prompt, request_id)
+    classification = await classifier.classify(payload.prompt, request_id)
     classification_ms = elapsed_ms(classification_start)
 
     validation_start = perf_counter()
@@ -51,7 +51,7 @@ async def chat(
         response_text = input_decision.message
     else:
         inference_start = perf_counter()
-        generated_response = await mistral.generate(payload.prompt, request_id)
+        generated_response = await qwen.generate(payload.prompt, request_id)
         inference_ms = elapsed_ms(inference_start)
 
         output_validation_start = perf_counter()
@@ -75,8 +75,8 @@ async def chat(
             request_id=request_id,
             client_host=request.client.host if request.client else None,
             prompt=payload.prompt,
-            roberta_label=classification.label,
-            roberta_score=classification.score,
+            classifier_label=classification.label,
+            classifier_score=classification.score,
             triggered_rules=triggered_rules,
             final_decision=decision,
             generated_response=generated_response,
@@ -101,11 +101,11 @@ async def web_chat(
     payload: ChatRequest,
     request: Request,
     rules: RuleEngine = Depends(get_rule_engine),
-    roberta: RobertaClient = Depends(get_roberta_client),
-    mistral: MistralClient = Depends(get_mistral_client),
+    classifier: ClassifierClient = Depends(get_classifier_client),
+    qwen: QwenClient = Depends(get_qwen_client),
     audit: AuditService = Depends(get_audit_service),
 ) -> ChatResponse:
-    return await chat(payload, request, rules, roberta, mistral, audit)
+    return await chat(payload, request, rules, classifier, qwen, audit)
 
 
 def elapsed_ms(start: float) -> float:

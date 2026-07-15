@@ -2,8 +2,8 @@ from functools import lru_cache
 
 from app.core.config import Settings
 from app.services.audit_service import AuditService
-from app.services.mistral_client import MistralClient
-from app.services.roberta_client import RobertaClient
+from app.services.qwen_client import QwenClient
+from app.services.classifier_client import ClassifierClient
 from app.services.rule_engine import RuleEngine
 
 
@@ -24,20 +24,20 @@ def get_audit_service() -> AuditService:
 
 
 @lru_cache
-def get_roberta_client() -> RobertaClient:
+def get_classifier_client() -> ClassifierClient:
     settings = get_settings()
-    return RobertaClient(
-        base_url=settings.roberta_url,
-        endpoint=settings.roberta_endpoint,
+    return ClassifierClient(
+        base_url=settings.classifier_url,
+        endpoint=settings.classifier_endpoint,
         timeout_seconds=settings.request_timeout_seconds,
     )
 
 
 @lru_cache
-def get_mistral_client() -> MistralClient:
+def get_qwen_client() -> QwenClient:
     settings = get_settings()
-    return MistralClient(
-        base_url=settings.mistral_url,
-        endpoint=settings.mistral_endpoint,
+    return QwenClient(
+        base_url=settings.qwen_url,
+        endpoint=settings.qwen_endpoint,
         timeout_seconds=settings.request_timeout_seconds,
     )

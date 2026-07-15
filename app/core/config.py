@@ -9,11 +9,11 @@ class Settings(BaseSettings):
     app_name: str = "scada-llm-security"
     log_level: str = "INFO"
 
-    roberta_url: str = "http://127.0.0.1:8001"
-    roberta_endpoint: str = "/prompt"
+    classifier_url: str = "http://127.0.0.1:8001"
+    classifier_endpoint: str = "/prompt"
 
-    mistral_url: str = "http://127.0.0.1:8002"
-    mistral_endpoint: str = "/chat"
+    qwen_url: str = "http://127.0.0.1:8002"
+    qwen_endpoint: str = "/chat"
 
     request_timeout_seconds: float = 30.0
     rules_path: Path = Path("./app/rules")
