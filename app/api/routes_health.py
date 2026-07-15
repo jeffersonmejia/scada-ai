@@ -21,10 +21,8 @@ async def health(
         classifier_client.health(),
         qwen_client.health(),
     )
-    if not classifier_loaded:
-        errors.append("Classifier API unavailable")
-    if not qwen_available:
-        errors.append("Qwen API unavailable")
+    if not classifier_loaded or not qwen_available:
+        errors.append("Sorry, we can't process your request right now. Please try again later.")
 
     return HealthResponse(
         status="healthy" if not errors else "degraded",

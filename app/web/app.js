@@ -5,7 +5,6 @@ const clearChatButton = document.querySelector("#clearChatButton");
 const clearChatDialog = document.querySelector("#clearChatDialog");
 const cancelClearChatButton = document.querySelector("#cancelClearChatButton");
 const confirmClearChatButton = document.querySelector("#confirmClearChatButton");
-const chatToast = document.querySelector("#chatToast");
 const themeButton = document.querySelector("#themeButton");
 const messages = document.querySelector("#messages");
 const promptInput = document.querySelector("#prompt");
@@ -20,10 +19,10 @@ const classifierStatusIcon = document.querySelector("#classifierStatusIcon");
 const qwenStatusIcon = document.querySelector("#qwenStatusIcon");
 const classifierStatusLabel = document.querySelector("#classifierStatusLabel");
 const qwenStatusLabel = document.querySelector("#qwenStatusLabel");
-const unavailableMessage = "Sorry, I can't respond right now. Try again later.";
+const unavailableMessage = "Sorry, we can't process your request right now. Please try again later.";
 let requestTimeoutMs = 30000;
 let isSubmitting = false;
-let toastTimeoutId;
+let clearFeedbackTimeoutId;
 const classificationStats = {
   notPassed: 0,
   passed: 0
@@ -170,7 +169,7 @@ function syncThemeIcon() {
   themeButton.title = isDark ? "Light mode" : "Dark mode";
   themeButton.setAttribute("aria-label", themeButton.title);
   document.querySelectorAll(".emptyIllustration").forEach((illustration) => {
-    illustration.src = isDark ? "/assets/1-dark.svg?v=2" : "/assets/1.svg?v=2";
+    illustration.src = isDark ? "/assets/1-dark.svg?v=3" : "/assets/1.svg?v=3";
   });
 }
 
@@ -216,8 +215,8 @@ function createEmptyState() {
   const illustration = document.createElement("img");
   illustration.className = "emptyIllustration";
   illustration.src = document.documentElement.classList.contains("dark")
-    ? "/assets/1-dark.svg?v=2"
-    : "/assets/1.svg?v=2";
+    ? "/assets/1-dark.svg?v=3"
+    : "/assets/1.svg?v=3";
   illustration.alt = "";
   illustration.setAttribute("aria-hidden", "true");
 
@@ -485,13 +484,20 @@ themeButton.addEventListener("click", async () => {
   );
 });
 
-function showChatDeletedToast() {
-  clearTimeout(toastTimeoutId);
-  chatToast.classList.remove("isVisible");
-  requestAnimationFrame(() => {
-    chatToast.classList.add("isVisible");
-    toastTimeoutId = setTimeout(() => chatToast.classList.remove("isVisible"), 2200);
-  });
+function showChatDeletedFeedback() {
+  clearTimeout(clearFeedbackTimeoutId);
+  const icon = clearChatButton.querySelector("ion-icon");
+  const label = clearChatButton.querySelector("span");
+  icon.setAttribute("name", "checkmark-outline");
+  label.textContent = "Chat deleted";
+  clearChatButton.classList.remove("isConfirmed");
+  requestAnimationFrame(() => clearChatButton.classList.add("isConfirmed"));
+
+  clearFeedbackTimeoutId = setTimeout(() => {
+    clearChatButton.classList.remove("isConfirmed");
+    icon.setAttribute("name", "trash-outline");
+    label.textContent = "Clear chat";
+  }, 2200);
 }
 
 function clearActiveChat() {
@@ -513,7 +519,7 @@ function clearActiveChat() {
     promptInput.focus();
   }
 
-  showChatDeletedToast();
+  showChatDeletedFeedback();
 }
 
 clearChatButton.addEventListener("click", () => {

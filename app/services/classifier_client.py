@@ -6,6 +6,7 @@ from app.core.exceptions import ServiceUnavailableError
 from app.schemas.classification import ClassificationResult
 
 logger = logging.getLogger(__name__)
+unavailable_message = "Sorry, we can't process your request right now. Please try again later."
 
 
 class ClassifierClient:
@@ -31,11 +32,11 @@ class ClassifierClient:
                     json={"prompt": text},
                 )
             if response.status_code == 503:
-                raise ServiceUnavailableError("Classifier model not loaded", service="classifier")
+                raise ServiceUnavailableError(unavailable_message, service="classifier")
             response.raise_for_status()
             return ClassificationResult.model_validate(response.json())
         except ServiceUnavailableError:
             raise
         except (httpx.HTTPError, ValueError) as exc:
             logger.error("Classifier request failed for %s: %s", request_id, exc)
-            raise ServiceUnavailableError("Classifier API unavailable", service="classifier") from exc
+            raise ServiceUnavailableError(unavailable_message, service="classifier") from exc

@@ -5,6 +5,7 @@ import httpx
 from app.core.exceptions import ServiceUnavailableError
 
 logger = logging.getLogger(__name__)
+unavailable_message = "Sorry, we can't process your request right now. Please try again later."
 
 
 class QwenClient:
@@ -33,10 +34,10 @@ class QwenClient:
                     json=payload,
                 )
             if response.status_code >= 500:
-                raise ServiceUnavailableError("Qwen API unavailable", service="qwen")
+                raise ServiceUnavailableError(unavailable_message, service="qwen")
             response.raise_for_status()
             data = response.json()
             return str(data.get("response") or data.get("message") or data.get("text") or "")
         except (httpx.HTTPError, ValueError) as exc:
             logger.error("Qwen request failed for %s: %s", request_id, exc)
-            raise ServiceUnavailableError("Qwen API unavailable", service="qwen") from exc
+            raise ServiceUnavailableError(unavailable_message, service="qwen") from exc

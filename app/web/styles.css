@@ -7,9 +7,9 @@
   --muted: #6e6e73;
   --line: rgba(255, 255, 255, 0.58);
   --line-strong: rgba(255, 255, 255, 0.66);
-  --accent: #ff2d55;
-  --accent-hot: #ff3b8d;
-  --accent-soft: rgba(255, 45, 85, 0.07);
+  --accent: #2563eb;
+  --accent-hot: #3b82f6;
+  --accent-soft: rgba(37, 99, 235, 0.08);
   --assistant-bubble: #e5e5ea;
   --user-bubble: #f2f2f7;
   --field: #ffffff;
@@ -26,11 +26,11 @@
   --muted: #b7b7bd;
   --line: rgba(255, 255, 255, 0.18);
   --line-strong: rgba(255, 255, 255, 0.28);
-  --accent: #ff2d55;
-  --accent-hot: #ff3b8d;
-  --accent-soft: rgba(255, 45, 85, 0.1);
+  --accent: #3b82f6;
+  --accent-hot: #60a5fa;
+  --accent-soft: rgba(59, 130, 246, 0.12);
   --assistant-bubble: #3a3a3e;
-  --user-bubble: #ff2d55;
+  --user-bubble: #2563eb;
   --field: #1c1c1e;
   --bubble-shadow: none;
   --shadow: none;
@@ -186,11 +186,11 @@ body {
 }
 
 .barRow:first-child .barName ion-icon {
-  color: #e5484d;
+  color: #94a3b8;
 }
 
 .barRow:last-child .barName ion-icon {
-  color: #1f9d67;
+  color: #60a5fa;
 }
 
 .barLabel strong {
@@ -217,11 +217,11 @@ body {
 }
 
 .notPassedBar {
-  background: #e5484d;
+  background: #94a3b8;
 }
 
 .passedBar {
-  background: #1f9d67;
+  background: #60a5fa;
 }
 
 .barCount {
@@ -292,11 +292,11 @@ body {
 }
 
 .connConnected .connIcon {
-  color: #30c46b;
+  color: #60a5fa;
 }
 
 .connDisconnected .connIcon {
-  color: #e5484d;
+  color: #94a3b8;
 }
 
 .connUnknown .connIcon {
@@ -448,8 +448,8 @@ body {
 
 .musicGlyph {
   align-items: center;
-  background: linear-gradient(145deg, var(--accent), var(--accent-hot));
-  border-radius: 999px;
+  background: transparent;
+  border-radius: 12px;
   box-shadow: none;
   color: #ffffff;
   display: inline-flex;
@@ -457,14 +457,15 @@ body {
   height: 48px;
   justify-content: center;
   position: relative;
+  overflow: hidden;
   width: 48px;
 }
 
 .brandIcon {
   display: block;
-  height: 25px;
-  stroke-width: 2.2;
-  width: 25px;
+  height: 100%;
+  object-fit: contain;
+  width: 100%;
 }
 
 .topActions {
@@ -740,9 +741,9 @@ button:active {
 }
 
 #clearChatButton {
-  background: rgba(229, 72, 77, 0.07);
-  border-color: rgba(229, 72, 77, 0.14);
-  color: rgba(190, 45, 51, 0.78);
+  background: rgba(37, 99, 235, 0.08);
+  border-color: rgba(37, 99, 235, 0.16);
+  color: #2563eb;
   gap: 6px;
   padding: 0 12px 0 10px;
   transition: background 150ms ease, border-color 150ms ease, color 150ms ease, transform 150ms ease;
@@ -767,26 +768,26 @@ button:active {
 }
 
 :root:not(.dark) #clearChatButton span {
-  color: rgba(190, 45, 51, 0.78);
+  color: #2563eb;
   font-weight: 500;
 }
 
 #clearChatButton:hover {
-  background: rgba(229, 72, 77, 0.11);
-  border-color: rgba(229, 72, 77, 0.2);
-  color: rgba(190, 45, 51, 0.9);
+  background: rgba(37, 99, 235, 0.14);
+  border-color: rgba(37, 99, 235, 0.24);
+  color: #1d4ed8;
 }
 
 :root.dark #clearChatButton {
-  background: rgba(255, 105, 110, 0.08);
-  border-color: rgba(255, 105, 110, 0.16);
-  color: rgba(255, 145, 149, 0.82);
+  background: rgba(59, 130, 246, 0.12);
+  border-color: rgba(96, 165, 250, 0.2);
+  color: #93c5fd;
 }
 
 :root.dark #clearChatButton:hover {
-  background: rgba(255, 105, 110, 0.13);
-  border-color: rgba(255, 105, 110, 0.22);
-  color: rgba(255, 165, 168, 0.94);
+  background: rgba(59, 130, 246, 0.2);
+  border-color: rgba(96, 165, 250, 0.3);
+  color: #bfdbfe;
 }
 
 .confirmDialog {
@@ -822,19 +823,23 @@ button:active {
 
 .confirmDialogIcon {
   align-items: center;
-  background: rgba(229, 72, 77, 0.09);
-  border: 1px solid rgba(229, 72, 77, 0.14);
+  background: var(--accent-soft);
+  border: 1px solid color-mix(in srgb, var(--accent) 24%, transparent);
   border-radius: 999px;
-  color: rgba(210, 55, 60, 0.85);
+  color: var(--accent);
   display: flex;
-  height: 46px;
+  height: 56px;
   justify-content: center;
-  margin-bottom: 16px;
-  width: 46px;
+  margin-bottom: 20px;
+  padding: 14px;
+  width: 56px;
 }
 
 .confirmDialogIcon ion-icon {
-  font-size: 21px;
+  display: block;
+  font-size: 24px;
+  height: 24px;
+  width: 24px;
 }
 
 .confirmDialog h2 {
@@ -872,61 +877,48 @@ button:active {
 }
 
 .confirmDialogButton {
-  background: rgba(229, 72, 77, 0.1);
-  border-color: rgba(229, 72, 77, 0.16);
-  color: rgba(200, 45, 51, 0.9);
+  background: rgba(37, 99, 235, 0.1);
+  border-color: rgba(37, 99, 235, 0.2);
+  color: #2563eb;
 }
 
 .confirmDialogButton:hover {
-  background: rgba(229, 72, 77, 0.16);
+  background: rgba(37, 99, 235, 0.18);
 }
 
 :root.dark .confirmDialogButton {
-  color: rgba(255, 145, 149, 0.9);
+  background: rgba(59, 130, 246, 0.16);
+  border-color: rgba(96, 165, 250, 0.24);
+  color: #93c5fd;
 }
 
-.toast {
-  align-items: center;
-  background: color-mix(in srgb, var(--surface) 96%, transparent);
-  border: 1px solid var(--line);
-  border-radius: 18px;
-  box-shadow: 0 18px 55px rgba(0, 0, 0, 0.18);
-  color: var(--ink);
-  display: flex;
-  font-size: 13px;
-  font-weight: 600;
-  gap: 10px;
-  left: 50%;
-  opacity: 0;
-  padding: 12px 17px 12px 12px;
-  pointer-events: none;
-  position: fixed;
-  top: 50%;
-  transform: translate(-50%, -50%) scale(0.96);
-  transition: opacity 180ms ease, transform 180ms ease;
-  z-index: 20;
+#clearChatButton.isConfirmed,
+:root.dark #clearChatButton.isConfirmed,
+#clearChatButton.isConfirmed:hover,
+:root.dark #clearChatButton.isConfirmed:hover {
+  animation: clearChatConfirmed 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #ffffff;
 }
 
-.toast.isVisible {
-  opacity: 1;
-  transform: translate(-50%, -50%) scale(1);
+#clearChatButton.isConfirmed span,
+:root:not(.dark) #clearChatButton.isConfirmed span {
+  color: #ffffff;
 }
 
-.toastIcon {
-  align-items: center;
-  background: rgba(31, 157, 103, 0.11);
-  border: 1px solid rgba(31, 157, 103, 0.16);
-  border-radius: 999px;
-  color: #1f9d67;
-  display: flex;
-  height: 30px;
-  justify-content: center;
-  width: 30px;
-}
+@keyframes clearChatConfirmed {
+  0% {
+    transform: scale(0.94);
+  }
 
-.toastIcon ion-icon {
-  font-size: 17px;
-  stroke-width: 2.4;
+  55% {
+    transform: scale(1.04);
+  }
+
+  100% {
+    transform: scale(1);
+  }
 }
 
 .iconButton:hover,
@@ -1098,14 +1090,14 @@ button:active {
   }
 
   .musicGlyph {
-    border-radius: 999px;
+    border-radius: 10px;
     height: 44px;
     width: 44px;
   }
 
   .brandIcon {
-    height: 23px;
-    width: 23px;
+    height: 100%;
+    width: 100%;
   }
 
   h1 {
