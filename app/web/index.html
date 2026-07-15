@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Scada IA</title>
-    <link rel="stylesheet" href="/styles.css?v=16" />
+    <link rel="stylesheet" href="/styles.css?v=19" />
   </head>
   <body>
     <div class="liquid liquidOne"></div>
@@ -64,7 +64,7 @@
             <div class="bars" aria-live="polite">
               <div class="barRow">
                 <div class="barLabel">
-                <span>Not passed</span>
+                <span class="barName"><ion-icon name="close-circle-outline" aria-hidden="true"></ion-icon>Not passed</span>
                   <strong id="notPassedPercent">0%</strong>
                 </div>
                 <div class="barTrack">
@@ -75,7 +75,7 @@
 
               <div class="barRow">
                 <div class="barLabel">
-                <span>Passed</span>
+                <span class="barName"><ion-icon name="checkmark-circle-outline" aria-hidden="true"></ion-icon>Passed</span>
                   <strong id="passedPercent">0%</strong>
                 </div>
                 <div class="barTrack">
@@ -110,14 +110,14 @@
       <span>Chat deleted</span>
     </div>
 
-    <script type="module" src="/vendor/ionicons/ionicons.esm.js"></script>
-    <script nomodule src="/vendor/ionicons/ionicons.js"></script>
+    <script type="module" src="/vendor/ionicons/ionicons.esm.js?v=3"></script>
+    <script nomodule src="/vendor/ionicons/ionicons.js?v=3"></script>
     <script>
       if ("EventSource" in window) {
         const liveReload = new EventSource("/__live-reload");
         liveReload.addEventListener("reload", () => window.location.reload());
       }
     </script>
-    <script src="/app.js?v=13"></script>
+    <script src="/app.js?v=15"></script>
   </body>
 </html>

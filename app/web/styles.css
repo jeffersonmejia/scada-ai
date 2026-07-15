@@ -112,6 +112,8 @@ body {
   display: grid;
   gap: 14px;
   min-height: 0;
+  min-width: 0;
+  overflow: hidden;
   padding: 22px;
   position: relative;
   z-index: 1;
@@ -127,6 +129,7 @@ body {
   border-radius: 1.15rem;
   display: grid;
   gap: 18px;
+  min-width: 0;
   padding: 16px;
 }
 
@@ -166,6 +169,28 @@ body {
   color: var(--muted);
   font-size: 13px;
   line-height: 1.2;
+}
+
+.barName {
+  align-items: center;
+  display: inline-flex;
+  gap: 6px;
+}
+
+.barName ion-icon {
+  display: block;
+  flex: 0 0 17px;
+  font-size: 17px;
+  height: 17px;
+  width: 17px;
+}
+
+.barRow:first-child .barName ion-icon {
+  color: #e5484d;
+}
+
+.barRow:last-child .barName ion-icon {
+  color: #1f9d67;
 }
 
 .barLabel strong {
@@ -209,9 +234,9 @@ body {
 }
 
 .connectionBar {
-  display: flex;
+  display: grid;
   gap: 12px;
-  justify-content: space-between;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .statusBox {
@@ -225,35 +250,56 @@ body {
   font-weight: 600;
   gap: 6px;
   line-height: 1;
+  min-width: 0;
+  white-space: nowrap;
   transition: color 300ms ease;
 }
 
 .connIcon {
+  display: block;
+  flex: 0 0 18px;
   font-size: 18px;
+  height: 18px;
   transition: color 300ms ease;
+  width: 18px;
 }
 
 .statusLabel {
+  display: inline-block;
   font-weight: 400;
+  overflow: hidden;
   opacity: 0.7;
   font-size: 11px;
+  transition: width 260ms cubic-bezier(0.22, 1, 0.36, 1), color 200ms ease;
+  white-space: nowrap;
+  width: 68px;
 }
 
-.connConnected,
-.connConnected .connIcon,
 .connConnected .statusLabel {
+  width: 34px;
+}
+
+.connDisconnected .statusLabel {
+  width: 38px;
+}
+
+.connUnknown .statusLabel {
+  width: 56px;
+}
+
+.connProcessing .statusLabel {
+  width: 68px;
+}
+
+.connConnected .connIcon {
   color: #30c46b;
 }
 
-.connDisconnected,
-.connDisconnected .connIcon,
-.connDisconnected .statusLabel {
+.connDisconnected .connIcon {
   color: #e5484d;
 }
 
-.connUnknown,
-.connUnknown .connIcon,
-.connUnknown .statusLabel {
+.connUnknown .connIcon {
   color: #a0a0a8;
 }
 
@@ -261,12 +307,20 @@ body {
   animation: connSpin 1s linear infinite;
 }
 
-@keyframes connSpin {
-  to { transform: rotate(360deg); }
+.connProcessing .connIcon {
+  color: var(--accent);
 }
 
-.connUnknown {
-  color: #a0a0a8;
+.connItem .statusLabel {
+  color: var(--muted);
+}
+
+.connProcessing .connIcon {
+  animation: connSpin 700ms linear infinite;
+}
+
+@keyframes connSpin {
+  to { transform: rotate(360deg); }
 }
 
 .truthPanel > span {

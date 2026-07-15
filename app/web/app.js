@@ -350,14 +350,22 @@ function setStatusItem(icon, connected, labelEl) {
   const cls = on ? "connConnected" : off ? "connDisconnected" : "connUnknown";
   item.className = "connItem " + cls;
   icon.className = "connIcon " + cls;
-  icon.setAttribute("name", on ? "checkmark-circle" : off ? "close-circle" : "sync-outline");
+  icon.setAttribute("name", on ? "radio-outline" : off ? "close-circle" : "sync-outline");
   if (labelEl) {
     labelEl.textContent = on ? "online" : off ? "offline" : "checking…";
   }
 }
 
+function setProcessingStatus(icon, labelEl, text) {
+  const item = icon.parentElement;
+  item.className = "connItem connProcessing";
+  icon.className = "connIcon connProcessing";
+  icon.setAttribute("name", "sync-outline");
+  labelEl.textContent = text;
+}
+
 async function updateConnectionStatus() {
-  if (healthCheckInFlight) return;
+  if (healthCheckInFlight || isSubmitting) return;
   healthCheckInFlight = true;
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), healthCheckTimeoutMs);
@@ -368,11 +376,14 @@ async function updateConnectionStatus() {
     const payload = await res.json();
     const rOk = payload.classifier_loaded === true;
     const mOk = payload.qwen_available === true;
+    if (isSubmitting) return;
     setStatusItem(classifierStatusIcon, rOk, classifierStatusLabel);
     setStatusItem(qwenStatusIcon, mOk, qwenStatusLabel);
   } catch {
-    setStatusItem(classifierStatusIcon, false, classifierStatusLabel);
-    setStatusItem(qwenStatusIcon, false, qwenStatusLabel);
+    if (!isSubmitting) {
+      setStatusItem(classifierStatusIcon, false, classifierStatusLabel);
+      setStatusItem(qwenStatusIcon, false, qwenStatusLabel);
+    }
   } finally {
     clearTimeout(timeoutId);
     healthCheckInFlight = false;
@@ -399,6 +410,8 @@ form.addEventListener("submit", async (event) => {
   promptInput.value = "";
   promptInput.style.height = "auto";
   sendButton.disabled = true;
+  setProcessingStatus(classifierStatusIcon, classifierStatusLabel, "classifying…");
+  setProcessingStatus(qwenStatusIcon, qwenStatusLabel, "processing…");
   const thinking = addThinking();
 
   try {
@@ -430,6 +443,7 @@ form.addEventListener("submit", async (event) => {
   } finally {
     isSubmitting = false;
     sendButton.disabled = false;
+    updateConnectionStatus();
     promptInput.focus();
   }
 });

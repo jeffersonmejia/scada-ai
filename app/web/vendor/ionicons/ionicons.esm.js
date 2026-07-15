@@ -8,6 +8,17 @@
       ["path", { d: "M12 19V5" }],
       ["path", { d: "m6 11 6-6 6 6" }]
     ],
+    "checkmark-outline": [
+      ["path", { d: "m5 12 4 4L19 6" }]
+    ],
+    "checkmark-circle": [
+      ["circle", { cx: "12", cy: "12", r: "9" }],
+      ["path", { d: "m8 12 2.5 2.5L16 9" }]
+    ],
+    "checkmark-circle-outline": [
+      ["circle", { cx: "12", cy: "12", r: "9" }],
+      ["path", { d: "m8 12 2.5 2.5L16 9" }]
+    ],
     "chatbubble-ellipses-outline": [
       ["path", { d: "M21 11.5a8.4 8.4 0 0 1-8.5 8.5 8.9 8.9 0 0 1-3.7-.8L3 21l1.9-5.2A8 8 0 0 1 4 11.5 8.4 8.4 0 0 1 12.5 3 8.4 8.4 0 0 1 21 11.5Z" }],
       ["path", { d: "M8.5 12h.01" }],
@@ -26,8 +37,25 @@
       ["path", { d: "M20 15h3" }],
       ["path", { d: "M10 10h4v4h-4z" }]
     ],
+    "close-circle": [
+      ["circle", { cx: "12", cy: "12", r: "9" }],
+      ["path", { d: "m9 9 6 6" }],
+      ["path", { d: "m15 9-6 6" }]
+    ],
+    "close-circle-outline": [
+      ["circle", { cx: "12", cy: "12", r: "9" }],
+      ["path", { d: "m9 9 6 6" }],
+      ["path", { d: "m15 9-6 6" }]
+    ],
     "moon-outline": [
       ["path", { d: "M12 3a6.7 6.7 0 0 0 8.9 8.9A8.2 8.2 0 1 1 12 3Z" }]
+    ],
+    "radio-outline": [
+      ["circle", { cx: "12", cy: "12", r: "2" }],
+      ["path", { d: "M8.5 8.5a5 5 0 0 0 0 7" }],
+      ["path", { d: "M15.5 8.5a5 5 0 0 1 0 7" }],
+      ["path", { d: "M5.5 5.5a9 9 0 0 0 0 13" }],
+      ["path", { d: "M18.5 5.5a9 9 0 0 1 0 13" }]
     ],
     "musical-notes-outline": [
       ["path", { d: "M9 18V5l12-2v13" }],
@@ -49,6 +77,19 @@
       ["path", { d: "M20 12h2" }],
       ["path", { d: "M4.93 19.07 6.34 17.66" }],
       ["path", { d: "M17.66 6.34 19.07 4.93" }]
+    ],
+    "sync-outline": [
+      ["path", { d: "M20 7v5h-5" }],
+      ["path", { d: "M4 17v-5h5" }],
+      ["path", { d: "M6.1 9A7 7 0 0 1 18.5 6.5L20 8" }],
+      ["path", { d: "M17.9 15A7 7 0 0 1 5.5 17.5L4 16" }]
+    ],
+    "trash-outline": [
+      ["path", { d: "M4 7h16" }],
+      ["path", { d: "M9 7V4h6v3" }],
+      ["path", { d: "m6 7 1 14h10l1-14" }],
+      ["path", { d: "M10 11v6" }],
+      ["path", { d: "M14 11v6" }]
     ]
   };
 
